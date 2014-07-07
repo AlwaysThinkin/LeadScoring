@@ -26,19 +26,19 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISE
 OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
-public with sharing class LeadScoringRulesController {
+public with sharing class OppScoringRulesController {
     
     public Boolean picklistRendered { get; set;}
     public Boolean inputBoxRendered{ get; set; }
     public Boolean inputCheckBoxRendered{ get; set;}
     
-    private LeadScoringRule__c lsr;
+    private OppScoringRule__c osr;
 
-    private ApexPages.StandardController lsrController;
+    private ApexPages.StandardController osrController;
     
-    public LeadScoringRulesController(ApexPages.StandardController controller) {
-        lsrController = controller;
-        lsr= (LeadScoringRule__c)controller.getRecord();
+    public OppScoringRulesController(ApexPages.StandardController controller) {
+        osrController = controller;
+        osr= (OppScoringRule__c)controller.getRecord();
         valueRender();       
     }
   
@@ -46,9 +46,9 @@ public with sharing class LeadScoringRulesController {
     {
         PageReference pr;
         try{
-            //lsrController.save(); //Note save breaks for some reason but upsert works
-            upsert lsr;
-            Schema.DescribeSObjectResult describeResult = lsrController.getRecord().getSObjectType().getDescribe();
+            //osrController.save(); //Note save breaks for some reason but upsert works
+            upsert osr;
+            Schema.DescribeSObjectResult describeResult = osrController.getRecord().getSObjectType().getDescribe();
             pr = new PageReference('/' + describeResult.getKeyPrefix() + '/e');
             pr.setRedirect(true);
             return pr;    
@@ -61,21 +61,21 @@ public with sharing class LeadScoringRulesController {
 
     }//saveNew
         
-    public List<selectOption> getLSROperator(){
+    public List<selectOption> getOSROperator(){
        List<selectOption> options=new List<selectOption>();
        Map<String, Schema.SObjectField> cmFieldMap=Schema.SObjectType.CampaignMember.fields.getMap();
-       Map<String, Schema.SObjectField> leadFieldMap=Schema.SObjectType.Lead.fields.getMap();
+       Map<String, Schema.SObjectField> oppFieldMap=Schema.SObjectType.Opportunity.fields.getMap();
        DisplayType fieldType;
        Boolean typeSelected=False;
         
-       if (lsr.Type__c=='Lead'){//if 1
-           Schema.SObjectField fieldToken=leadFieldMap.get(lsr.Field_Name__c);
+       if (osr.Type__c=='Opportunity'){//if 1
+           Schema.SObjectField fieldToken=OppFieldMap.get(osr.Field_Name__c);
             try{
                fieldType=fieldToken.getDescribe().getType();
                typeSelected=true;
             }catch (Exception e){}//exception happens when changing type as the other picklist hasn't had a chance to refresh yet   
-       } else if (lsr.Type__c=='Campaign Member'){
-           Schema.SObjectField fieldToken=cmFieldMap.get(lsr.Field_Name__c);
+       } else if (osr.Type__c=='Campaign Member'){
+           Schema.SObjectField fieldToken=cmFieldMap.get(osr.Field_Name__c);
            try{
                fieldType=fieldToken.getDescribe().getType();
                typeSelected=true;
@@ -108,7 +108,7 @@ public with sharing class LeadScoringRulesController {
        return options;
     }
     
-    public List<selectOption> getLSRFieldNames(){
+    public List<selectOption> getOSRFieldNames(){
         List<selectOption> options=new List<selectOption>();
         List<String> fieldLabels=new List<String>();//included to create a sorted field name list
         Map<String,String> fieldLabelNameMap=new Map<String,String>();
@@ -116,11 +116,11 @@ public with sharing class LeadScoringRulesController {
 
         Boolean evaluateFields=false;
         
-        if(lsr.Type__c=='Campaign Member'){
+        if(osr.Type__c=='Campaign Member'){
             fieldMap=Schema.SObjectType.CampaignMember.fields.getMap();
             evaluateFields=true;
-        } else if(lsr.Type__c=='Lead'){
-            fieldMap=Schema.SObjectType.Lead.fields.getMap();
+        } else if(osr.Type__c=='Opportunity'){
+            fieldMap=Schema.SObjectType.Opportunity.fields.getMap();
             evaluateFields=true;
         }
         
@@ -136,26 +136,26 @@ public with sharing class LeadScoringRulesController {
             }//for 1
             fieldLabels.sort();
             for (String fLabel:fieldLabels){//for 1
-                //Remove the package fields Lead Score, Campaign Score, and Total Score, to avoid a query issue.
-                if((fieldLabelNameMap.get(fLabel)!='Lead_Score__c')&&(fieldLabelNameMap.get(fLabel)!='Campaign_Score__c')&&(fieldLabelNameMap.get(fLabel)!='Total_Score__c')){//if 2
+                //Remove the package fields Opp Score, Campaign Score, and Total Score, to avoid a query issue.
+                if((fieldLabelNameMap.get(fLabel)!='Opp_Score__c')&&(fieldLabelNameMap.get(fLabel)!='Campaign_Score__c')&&(fieldLabelNameMap.get(fLabel)!='Total_Score__c')){//if 2
                     options.add(new selectOption(fieldLabelNameMap.get(fLabel),fLabel));
                 }//if 2
             }//for 1    
         }//if 1
 
         return options;
-    }//getLSRFieldNames
+    }//getOSRFieldNames
     
     public List<SelectOption> getValuePicklistOptions(){
         List<SelectOption> valuePicklistOptions = new List<SelectOption>();
         Map<String, Schema.SObjectField> fieldMap=new Map<String, Schema.SObjectField>();
-        if (lsr.Field_Name__c!=null){
-            String fName=lsr.Field_Name__c;
+        if (osr.Field_Name__c!=null){
+            String fName=osr.Field_Name__c;
             system.debug('Field Name: '+fName);
-            if(lsr.Type__c=='Campaign Member'){
+            if(osr.Type__c=='Campaign Member'){
                 fieldMap=Schema.SObjectType.CampaignMember.fields.getMap();
-            } else if(lsr.Type__c=='Lead'){
-                fieldMap=Schema.SObjectType.Lead.fields.getMap();
+            } else if(osr.Type__c=='Opportunity'){
+                fieldMap=Schema.SObjectType.Opportunity.fields.getMap();
             }
             try{//this will error when changing types as the field name is different than the type as the FieldNames picklsit hasn't been regenerated yet
                 Schema.DisplayType fType=fieldMap.get(fName).getDescribe().getType();
@@ -166,7 +166,7 @@ public with sharing class LeadScoringRulesController {
                     }//for 1
                 }//if 2
             }catch(Exception e){
-                system.debug('getValuePicklistOptions had an error, likely due to switching between Lead & Campaign Member rules. Error:'+e);
+                system.debug('getValuePicklistOptions had an error, likely due to switching between Opp & Campaign Member rules. Error:'+e);
             }
         }//if 1    
         return valuePicklistOptions ;
@@ -176,13 +176,13 @@ public with sharing class LeadScoringRulesController {
         picklistRendered=False;
         inputCheckBoxRendered=False;
         Map<String, Schema.SObjectField> fieldMap=new Map<String, Schema.SObjectField>();
-        if (lsr.Field_Name__c!=null &&lsr.Type__c!=null){//if 1
-            String fname=lsr.Field_Name__c;
+        if (osr.Field_Name__c!=null &&osr.Type__c!=null){//if 1
+            String fname=osr.Field_Name__c;
 
-            if(lsr.Type__c=='Campaign Member'){//if 2
+            if(osr.Type__c=='Campaign Member'){//if 2
                 fieldMap=Schema.SObjectType.CampaignMember.fields.getMap();
-            } else if(lsr.Type__c=='Lead'){
-                fieldMap=Schema.SObjectType.Lead.fields.getMap();
+            } else if(osr.Type__c=='Opportunity'){
+                fieldMap=Schema.SObjectType.Opportunity.fields.getMap();
             }//if 2
             if(fieldMap.get(fName).getDescribe().getType()==Schema.DisplayType.Picklist){//if 2
                 picklistRendered=True;

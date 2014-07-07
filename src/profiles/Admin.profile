@@ -1,116 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Profile xmlns="http://soap.sforce.com/2006/04/metadata">
     <applicationVisibilities>
-        <application>Lead_Scoring</application>
+        <application>Opp_Scoring</application>
         <default>false</default>
         <visible>true</visible>
     </applicationVisibilities>
     <classAccesses>
-        <apexClass>LeadCampaignScoreInitialize</apexClass>
+        <apexClass>OppScoringBatchInitialize</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>LeadScoring</apexClass>
+        <apexClass>OppScoringInitialize</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>LeadScoringBatchInitialize</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>LeadScoringInitialize</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>LeadScoringRulesController</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>LeadScoringTests</apexClass>
+        <apexClass>OppScoringRulesController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <fieldLevelSecurities>
         <editable>true</editable>
-        <field>CampaignMember.Campaign_Score__c</field>
+        <field>Opportunity.Opp_Score__c</field>
         <hidden>false</hidden>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
-        <field>Contact.Campaign_Score__c</field>
+        <field>OppScoringRule__c.Active__c</field>
         <hidden>false</hidden>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
-        <field>Contact.Lead_Score__c</field>
+        <field>OppScoringRule__c.Campaign__c</field>
         <hidden>false</hidden>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
-        <field>Contact.Total_Lead_Score__c</field>
+        <field>OppScoringRule__c.Field_Label__c</field>
         <hidden>false</hidden>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
-        <field>Lead.Campaign_Score__c</field>
+        <field>OppScoringRule__c.Field_Name__c</field>
         <hidden>false</hidden>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
-        <field>Lead.Lead_Priority__c</field>
+        <field>OppScoringRule__c.Operator__c</field>
         <hidden>false</hidden>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
-        <field>Lead.Lead_Score__c</field>
+        <field>OppScoringRule__c.Score_Change__c</field>
         <hidden>false</hidden>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
-        <field>Lead.Total_Lead_Score__c</field>
+        <field>OppScoringRule__c.Type__c</field>
         <hidden>false</hidden>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
-        <field>LeadScoringRule__c.Active__c</field>
-        <hidden>false</hidden>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
-        <field>LeadScoringRule__c.Campaign__c</field>
-        <hidden>false</hidden>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
-        <field>LeadScoringRule__c.Field_Label__c</field>
-        <hidden>false</hidden>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
-        <field>LeadScoringRule__c.Field_Name__c</field>
-        <hidden>false</hidden>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
-        <field>LeadScoringRule__c.Operator__c</field>
-        <hidden>false</hidden>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
-        <field>LeadScoringRule__c.Score_Change__c</field>
-        <hidden>false</hidden>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
-        <field>LeadScoringRule__c.Type__c</field>
-        <hidden>false</hidden>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
-        <field>LeadScoringRule__c.Value__c</field>
+        <field>OppScoringRule__c.Value__c</field>
         <hidden>false</hidden>
     </fieldLevelSecurities>
     <layoutAssignments>
-        <layout>LeadScoringRule__c-Lead Scoring Rule Layout</layout>
+        <layout>OppScoringRule__c-Opp Scoring Rule Layout</layout>
     </layoutAssignments>
     <objectPermissions>
         <allowCreate>true</allowCreate>
@@ -118,27 +71,27 @@
         <allowEdit>true</allowEdit>
         <allowRead>true</allowRead>
         <modifyAllRecords>true</modifyAllRecords>
-        <object>LeadScoringRule__c</object>
+        <object>OppScoringRule__c</object>
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
     <pageAccesses>
-        <apexPage>LeadScoringDetail</apexPage>
+        <apexPage>OppScoringDetail</apexPage>
         <enabled>true</enabled>
     </pageAccesses>
     <pageAccesses>
-        <apexPage>LeadScoringRulesEdit</apexPage>
+        <apexPage>OppScoringRulesEdit</apexPage>
         <enabled>true</enabled>
     </pageAccesses>
     <pageAccesses>
-        <apexPage>LeadScoringSetup</apexPage>
+        <apexPage>OppScoringSetup</apexPage>
         <enabled>true</enabled>
     </pageAccesses>
     <tabVisibilities>
-        <tab>LeadScoringRule__c</tab>
+        <tab>OppScoringRule__c</tab>
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
     <tabVisibilities>
-        <tab>Score_All_Leads</tab>
+        <tab>Score_All_Opps</tab>
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
     <userLicense>Salesforce</userLicense>

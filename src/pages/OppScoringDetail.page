@@ -25,29 +25,29 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED 
 OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
-<apex:page standardController="LeadScoringRule__c" title="Lead Scoring Rule {!LeadScoringRule__c.Name}">
-    <apex:sectionHeader title="Lead Scoring Rule" subtitle="{!LeadScoringRule__c.name}" />
+<apex:page standardController="OppScoringRule__c" title="Opp Scoring Rule {!OppScoringRule__c.Name}">
+    <apex:sectionHeader title="Opp Scoring Rule" subtitle="{!OppScoringRule__c.name}" />
     
-    Note: Leads and campaign members are scored a split second after saving the record.  To test rules, save the test lead or member and then refresh your browser (F5 on most computers).<br/><br/>
+    Note: Opportunities and campaign members are scored a split second after saving the record.  To test rules, save the test Opportunity or member and then refresh your browser (F5 on most computers).<br/><br/>
     <apex:form id="theForm" title="form">        
-        <apex:pageBlock title="Lead Scoring Rule Detail" id="thePageBlock">
+        <apex:pageBlock title="Opp Scoring Rule Detail" id="thePageBlock">
             <apex:pageBlockButtons >
                 <apex:commandButton value="Edit" action="{!edit}"/>&nbsp;&nbsp;&nbsp;   
                 <apex:commandButton value="Delete" action="{!delete}"/>
             </apex:pageBlockButtons>
             <apex:pageBlockSection >
-                <apex:outputField value="{!LeadScoringRule__c.Active__c}" />    
+                <apex:outputField value="{!OppScoringRule__c.Active__c}" />    
             </apex:pageBlockSection>                
             <apex:pageBlockSection >
-                <apex:outputField value="{!LeadScoringRule__c.Type__c}"  />
+                <apex:outputField value="{!OppScoringRule__c.Type__c}"  />
 
             </apex:pageBlockSection>                
             <apex:pageBlockSection >
-                <apex:outputField id="camp" value="{!LeadScoringRule__c.Campaign__c}" rendered="{!LeadScoringRule__c.Type__c=='Campaign Member'}" />    
+                <apex:outputField id="camp" value="{!OppScoringRule__c.Campaign__c}" rendered="{!OppScoringRule__c.Type__c=='Campaign Member'}" />    
             </apex:pageBlockSection>                
             
             <apex:pageBlockSection >
-                <apex:outputField value="{!LeadScoringRule__c.Score_Change__c}" />    
+                <apex:outputField value="{!OppScoringRule__c.Score_Change__c}" />    
             </apex:pageBlockSection>                
             <apex:pageBlockSection title="Rule Criteria" >
                 <apex:panelGrid columns="3" cellspacing="10">
@@ -55,13 +55,13 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
                     <apex:pageBlockSectionItem ><b>Operator</b></apex:pageBlockSectionItem> 
                     <apex:pageBlockSectionItem ><b>Value</b></apex:pageBlockSectionItem> 
                     <apex:pageBlockSectionItem >
-                        <apex:outputField id="FieldNames" value="{!LeadScoringRule__c.Field_Label__c}"  title="Field Name List"/>
+                        <apex:outputField id="FieldNames" value="{!OppScoringRule__c.Field_Label__c}"  title="Field Name List"/>
                     </apex:pageBlockSectionItem>     
                     <apex:pageBlockSectionItem >
-                        <apex:outputField value="{!LeadScoringRule__c.Operator__c}" />    
+                        <apex:outputField value="{!OppScoringRule__c.Operator__c}" />    
                     </apex:pageBlockSectionItem>     
                     <apex:pageBlockSectionItem >
-                        <apex:outputField value="{!LeadScoringRule__c.Value__c}" />    
+                        <apex:outputField value="{!OppScoringRule__c.Value__c}" />    
                     </apex:pageBlockSectionItem>     
                 </apex:panelgrid>
             </apex:pageBlockSection>                

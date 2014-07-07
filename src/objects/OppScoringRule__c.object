@@ -33,7 +33,7 @@
         <type>Default</type>
     </actionOverrides>
     <deploymentStatus>Deployed</deploymentStatus>
-    <description>This object tracks the lead scoring rules to help prioritize leads based on who they are and what they do.</description>
+    <description>This object tracks the opp scoring rules to help prioritize opps based on who they are and what they do.</description>
     <enableActivities>false</enableActivities>
     <enableEnhancedLookup>false</enableEnhancedLookup>
     <enableFeeds>false</enableFeeds>
@@ -42,9 +42,9 @@
     <fields>
         <fullName>Active__c</fullName>
         <defaultValue>true</defaultValue>
-        <description>In-Active rules are NOT evaluated when a lead or campaign member is saved.</description>
+        <description>In-Active rules are NOT evaluated when an opp or campaign member is saved.</description>
         <externalId>false</externalId>
-        <inlineHelpText>In-Active rules are NOT evaluated when a lead or campaign member is saved.</inlineHelpText>
+        <inlineHelpText>In-Active rules are NOT evaluated when an opp or campaign member is saved.</inlineHelpText>
         <label>Active</label>
         <trackHistory>false</trackHistory>
         <type>Checkbox</type>
@@ -56,8 +56,8 @@
         <inlineHelpText>Leave blank to select all campaigns</inlineHelpText>
         <label>Filter By Campaign (optional):</label>
         <referenceTo>Campaign</referenceTo>
-        <relationshipLabel>Lead Scoring Rules</relationshipLabel>
-        <relationshipName>Lead_Scoring_Rules</relationshipName>
+        <relationshipLabel>Opp Scoring Rules</relationshipLabel>
+        <relationshipName>Opp_Scoring_Rules</relationshipName>
         <trackHistory>false</trackHistory>
         <type>Lookup</type>
     </fields>
@@ -132,9 +132,9 @@
     </fields>
     <fields>
         <fullName>Score_Change__c</fullName>
-        <description>Enter the number of points to add to lead score.  Negative numbers are subtracted from Lead Score.  If Rule Type = Campaign Member, then points count towards Campaign Score on both the lead and Campaign Member.</description>
+        <description>Enter the number of points to add to opp score.  Negative numbers are subtracted from Opp Score.  If Rule Type = Campaign Member, then points count towards Campaign Score on both the opp and Campaign Member.</description>
         <externalId>false</externalId>
-        <inlineHelpText>Enter the number of points to add to lead score.  Negative numbers are subtracted from Lead Score.  If Rule Type = Campaign Member, then points count towards Campaign Score on both the lead and Campaign Member.</inlineHelpText>
+        <inlineHelpText>Enter the number of points to add to opp score.  Negative numbers are subtracted from Opp Score.  If Rule Type = Campaign Member, then points count towards Campaign Score on both the opp and Campaign Member.</inlineHelpText>
         <label>Points</label>
         <precision>18</precision>
         <required>false</required>
@@ -149,7 +149,7 @@
         <label>Rule Type</label>
         <picklist>
             <picklistValues>
-                <fullName>Lead</fullName>
+                <fullName>Opportunity</fullName>
                 <default>true</default>
             </picklistValues>
             <picklistValues>
@@ -171,7 +171,7 @@
         <type>Text</type>
         <unique>false</unique>
     </fields>
-    <label>Lead Scoring Rule</label>
+    <label>Opp Scoring Rule</label>
     <listViews>
         <fullName>All</fullName>
         <columns>Active__c</columns>
@@ -187,11 +187,11 @@
         <label>All</label>
     </listViews>
     <nameField>
-        <label>Lead Scoring Rule Name</label>
+        <label>Opp Scoring Rule Name</label>
         <trackHistory>false</trackHistory>
         <type>Text</type>
     </nameField>
-    <pluralLabel>Lead Scoring Rules</pluralLabel>
+    <pluralLabel>Opp Scoring Rules</pluralLabel>
     <searchLayouts>
         <customTabListAdditionalFields>Active__c</customTabListAdditionalFields>
         <customTabListAdditionalFields>Type__c</customTabListAdditionalFields>
@@ -233,10 +233,10 @@
         <errorMessage>Unfortunately, you cannot use a comma or semicolon for either multiple values or numbers. Please remove any commas and semicolons, and if desired, create a second rule for additional criteria.</errorMessage>
     </validationRules>
     <validationRules>
-        <fullName>No_LeadScore_CampaignScore_TotalScore</fullName>
+        <fullName>No_OppScore_CampaignScore_TotalScore</fullName>
         <active>true</active>
-        <errorConditionFormula>Field_Name__c ==&apos;lead_score__c&apos;|| Field_Name__c ==&apos;campaign_score__c&apos;|| Field_Name__c ==&apos;total_score__c&apos;</errorConditionFormula>
-        <errorMessage>You cannot create a rule with Field Name referencing Lead Score, Campaign Score, or Total Score.  Please change the field name for this rule.</errorMessage>
+        <errorConditionFormula>Field_Name__c ==&apos;opp_score__c&apos;|| Field_Name__c ==&apos;campaign_score__c&apos;|| Field_Name__c ==&apos;total_score__c&apos;</errorConditionFormula>
+        <errorMessage>You cannot create a rule with Field Name referencing Opp Score, Campaign Score, or Total Score.  Please change the field name for this rule.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>No_Type</fullName>
@@ -253,7 +253,7 @@
         <errorConditionFormula>isnull( Score_Change__c ) || isBlank(Score_Change__c)</errorConditionFormula>
         <errorMessage>You must enter a value for Points.  
 
-Note you can enter negative values to decrease the lead score if criteria is met.</errorMessage>
+Note you can enter negative values to decrease the opp score if criteria is met.</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Rule_field_operator_are_valid</fullName>

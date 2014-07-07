@@ -26,21 +26,23 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISE
 OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
-public class LeadScoringBatchInitialize{
+public class OppScoringBatchInitialize{
 
     // Constructor - this only really matters if the autoRun function doesn't work right
-    public LeadScoringBatchInitialize() {
+    public OppScoringBatchInitialize() {
     }
     // Code we will invoke on button click.
     public void autoRun() {
-        //First invoke the lead initialization.  
-        LeadScoringInitialize initLeads= new LeadScoringInitialize  ();
-        initLeads.leadQuery = 'Select Id FROM Lead WHERE IsConverted= FALSE';
-        Id leadProcessId = Database.executeBatch(initLeads); 
+        //First invoke the opp initialization.  
+        OppScoringInitialize initOpps= new OppScoringInitialize  ();
+        initOpps.oppQuery = 'Select Id FROM Opportunity WHERE IsConverted= FALSE';
+        Id oppProcessId = Database.executeBatch(initOpps); 
 
-        //Then invoke the campaign member updates
+        /*OppFork CM
+        Then invoke the campaign member updates
         LeadCampaignScoreInitialize initCMs= new LeadCampaignScoreInitialize ();
         initCMs.cmQuery = 'Select Id FROM CampaignMember WHERE ContactID = null';
-        Id cmProcessId = Database.executeBatch(initCMs, 100); 
+        Id cmProcessId = Database.executeBatch(initCMs, 100);
+        */
     }
 }

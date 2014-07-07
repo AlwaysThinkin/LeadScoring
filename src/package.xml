@@ -1,54 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
-        <members>LeadCampaignScoreInitialize</members>
-        <members>LeadScoring</members>
-        <members>LeadScoringBatchInitialize</members>
-        <members>LeadScoringInitialize</members>
-        <members>LeadScoringRulesController</members>
-        <members>LeadScoringTests</members>
+        <members>OppScoring</members>
+        <members>OppScoringBatchInitialize</members>
+        <members>OppScoringInitialize</members>
+        <members>OppScoringRulesController</members>
         <name>ApexClass</name>
     </types>
     <types>
-        <members>LeadScoringDetail</members>
-        <members>LeadScoringRulesEdit</members>
-        <members>LeadScoringSetup</members>
+        <members>OppScoringDetail</members>
+        <members>OppScoringRulesEdit</members>
+        <members>OppScoringSetup</members>
         <name>ApexPage</name>
     </types>
     <types>
-        <members>createLSRLabelAndName</members>
-        <members>evaluateLeadScoringRulesCMDelete</members>
-        <members>evaluateLeadScoringRulesCMInsertOrUpdate</members>
-        <members>evaluateLeadScoringRulesLeadInsertOrUpdate</members>
-        <members>limitNumLSRRules</members>
+        <members>createOSRLabelAndName</members>
+        <members>limitNumOSRRules</members>
+        <members>evaluateOppScoringRulesOppInsertOrUpdate</members>
         <name>ApexTrigger</name>
     </types>
     <types>
-        <members>Lead_Scoring</members>
+        <members>Opp_Scoring</members>
         <name>CustomApplication</name>
     </types>
     <types>
-        <members>CampaignMember.Campaign_Score__c</members>
-        <members>Contact.Campaign_Score__c</members>
-        <members>Contact.Lead_Score__c</members>
-        <members>Contact.Total_Lead_Score__c</members>
-        <members>Lead.Campaign_Score__c</members>
-        <members>Lead.Lead_Priority__c</members>
-        <members>Lead.Lead_Score__c</members>
-        <members>Lead.Total_Lead_Score__c</members>
+        <members>Opportunity.Opp_Score__c</members>
         <name>CustomField</name>
     </types>
     <types>
-        <members>LeadScoringRule__c</members>
+        <members>OppScoringRule__c</members>
         <name>CustomObject</name>
     </types>
     <types>
-        <members>LeadScoringRule__c</members>
-        <members>Score_All_Leads</members>
+        <members>OppScoringRule__c</members>
+        <members>Score_All_Opps</members>
         <name>CustomTab</name>
     </types>
     <types>
-        <members>LeadScoringRule__c-Lead Scoring Rule Layout</members>
+        <members>OppScoringRule__c-Opp Scoring Rule Layout</members>
         <name>Layout</name>
     </types>
     <types>
@@ -56,8 +45,8 @@
         <name>Profile</name>
     </types>
     <types>
-        <members>LeadScoringSetupPic1</members>
-        <members>LeadScoringSetupPic2</members>
+        <members>OppScoringSetupPic1</members>
+        <members>OppScoringSetupPic2</members>
         <name>StaticResource</name>
     </types>
     <version>20.0</version>

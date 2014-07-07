@@ -25,11 +25,11 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED 
 OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
-<apex:page standardController="LeadScoringRule__c" extensions="LeadScoringRulesController" showHeader="True">
-    <apex:sectionHeader title="Lead Scoring Rule" subtitle="{!LeadScoringRule__c.name}" />
-    Select criteria used to score leads based on either lead fields or campaign member fields.  Points from all rules are summed into Lead Score for lead rules and Campaign Score for campaign member rules.<br/><br/>
+<apex:page standardController="OppScoringRule__c" extensions="OppScoringRulesController" showHeader="True">
+    <apex:sectionHeader title="Opp Scoring Rule" subtitle="{!OppScoringRule__c.name}" />
+    Select criteria used to score opportunities based on either opportunity fields or campaign member fields.  Points from all rules are summed into Opp Score for opportunity rules and Campaign Score for campaign member rules.<br/><br/>
     <apex:form id="theform1">        
-        <apex:pageBlock title="Lead Scoring Rule Detail" id="thePageBlock">
+        <apex:pageBlock title="Opp Scoring Rule Detail" id="thePageBlock">
 <!-- Display error message -->
             <apex:pagemessages />
             <b><Font Color="#FF0000"></Font></b>
@@ -39,18 +39,18 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
                 <apex:commandButton value="Cancel" action="{!cancel}"/>
             </apex:pageBlockButtons>
             <apex:pageBlockSection >
-                <apex:inputField value="{!LeadScoringRule__c.Active__c}"  />    
+                <apex:inputField value="{!OppScoringRule__c.Active__c}"  />    
             </apex:pageBlockSection>                
             <apex:pageBlockSection >
-                <apex:inputField value="{!LeadScoringRule__c.Type__c}"  >
+                <apex:inputField value="{!OppScoringRule__c.Type__c}"  >
                     <apex:actionSupport event="onchange" rerender="thePageBlock"/>    
                 </apex:inputField>    
             </apex:pageBlockSection>                
             <apex:pageBlockSection >
-                <apex:inputField id="camp" value="{!LeadScoringRule__c.Campaign__c}" rendered="{!LeadScoringRule__c.Type__c=='Campaign Member'}" />    
+                <apex:inputField id="camp" value="{!OppScoringRule__c.Campaign__c}" rendered="{!OppScoringRule__c.Type__c=='Campaign Member'}" />    
             </apex:pageBlockSection>                
             <apex:pageBlockSection >
-                <apex:inputField value="{!LeadScoringRule__c.Score_Change__c}"  />    
+                <apex:inputField value="{!OppScoringRule__c.Score_Change__c}"  />    
             </apex:pageBlockSection>                
             
             <apex:pageBlockSection title="Rule Criteria" columns="3">
@@ -60,24 +60,24 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
                     <apex:pageBlockSectionItem ><b>Value</b></apex:pageBlockSectionItem> 
                         
                     <apex:pageBlockSectionItem >
-                        <apex:selectList id="FieldName" value="{!LeadScoringRule__c.Field_Name__c}" size="1" title="Field Name List">
-                            <apex:selectOptions value="{!LSRFieldNames}"></apex:selectOptions>
+                        <apex:selectList id="FieldName" value="{!OppScoringRule__c.Field_Name__c}" size="1" title="Field Name List">
+                            <apex:selectOptions value="{!OSRFieldNames}"></apex:selectOptions>
                                 <apex:actionSupport event="onchange" rerender="Operator"/>
                                 <apex:actionSupport event="onchange" rerender="ValuePicklist"/>                                    
                                 <apex:actionSupport event="onchange" action="{!valueRender}" />    
                         </apex:selectList>
                     </apex:pageBlockSectionItem>     
                     <apex:pageBlockSectionItem >
-                         <apex:selectList id="Operator" value="{!LeadScoringRule__c.Operator__c}" size="1" title="Operator List">
-                            <apex:selectOptions value="{!LSROperator}"></apex:selectOptions>
+                         <apex:selectList id="Operator" value="{!OppScoringRule__c.Operator__c}" size="1" title="Operator List">
+                            <apex:selectOptions value="{!OSROperator}"></apex:selectOptions>
                         </apex:selectList>
                     </apex:pageBlockSectionItem>     
                     <apex:pageBlockSectionItem rendered="{!inputBoxRendered}">
-                        <apex:inputField value="{!LeadScoringRule__c.Value__c}" />  
+                        <apex:inputField value="{!OppScoringRule__c.Value__c}" />  
                     </apex:pageBlockSectionItem>                             
                     <apex:pageBlockSectionItem >
-                        <apex:inputCheckbox value="{!LeadScoringRule__c.Value__c}" rendered="{!inputCheckBoxRendered}"/>    
-                        <apex:selectList id="ValuePicklist" value="{!LeadScoringRule__c.Value__c}" size="1"  rendered="{!picklistRendered}">
+                        <apex:inputCheckbox value="{!OppScoringRule__c.Value__c}" rendered="{!inputCheckBoxRendered}"/>    
+                        <apex:selectList id="ValuePicklist" value="{!OppScoringRule__c.Value__c}" size="1"  rendered="{!picklistRendered}">
                             <apex:selectOptions value="{!ValuePicklistOptions}"/>
                             <apex:actionSupport reRender="brBlock" event="onchange" status="" />
                         </apex:selectList>

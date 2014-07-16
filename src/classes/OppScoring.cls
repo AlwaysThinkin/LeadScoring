@@ -1,4 +1,6 @@
 /*
+OppScoring adaptation by Luke Cushanick
+
 Copyright (c) 2011, salesforce.com, Inc.
 All rights reserved.
 

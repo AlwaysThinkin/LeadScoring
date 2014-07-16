@@ -15,8 +15,8 @@
     </types>
     <types>
         <members>createOSRLabelAndName</members>
-        <members>limitNumOSRRules</members>
         <members>evaluateOppScoringRulesOppInsertOrUpdate</members>
+        <members>limitNumOSRRules</members>
         <name>ApexTrigger</name>
     </types>
     <types>

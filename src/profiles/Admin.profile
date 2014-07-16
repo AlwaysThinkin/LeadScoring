@@ -6,6 +6,10 @@
         <visible>true</visible>
     </applicationVisibilities>
     <classAccesses>
+        <apexClass>OppScoring</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>OppScoringBatchInitialize</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -17,11 +21,6 @@
         <apexClass>OppScoringRulesController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
-    <fieldLevelSecurities>
-        <editable>true</editable>
-        <field>Opportunity.Opp_Score__c</field>
-        <hidden>false</hidden>
-    </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
         <field>OppScoringRule__c.Active__c</field>
@@ -60,6 +59,11 @@
     <fieldLevelSecurities>
         <editable>true</editable>
         <field>OppScoringRule__c.Value__c</field>
+        <hidden>false</hidden>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>Opportunity.Opp_Score__c</field>
         <hidden>false</hidden>
     </fieldLevelSecurities>
     <layoutAssignments>

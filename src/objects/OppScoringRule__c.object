@@ -23,6 +23,7 @@
     <actionOverrides>
         <actionName>New</actionName>
         <content>OppScoringRulesEdit</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
         <type>Visualforce</type>
     </actionOverrides>
     <actionOverrides>
@@ -52,6 +53,7 @@
     </fields>
     <fields>
         <fullName>Campaign__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
         <description>Selecting a campaign limits the rule to fire only for members of this campaign.  Leaving this blank selects all campaigns.</description>
         <externalId>false</externalId>
         <inlineHelpText>Leave blank to select all campaigns</inlineHelpText>

@@ -21,51 +21,51 @@
         <apexClass>OppScoringRulesController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
-    <fieldLevelSecurities>
+    <fieldPermissions>
         <editable>true</editable>
         <field>OppScoringRule__c.Active__c</field>
-        <hidden>false</hidden>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>OppScoringRule__c.Campaign__c</field>
-        <hidden>false</hidden>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>OppScoringRule__c.Field_Label__c</field>
-        <hidden>false</hidden>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>OppScoringRule__c.Field_Name__c</field>
-        <hidden>false</hidden>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>OppScoringRule__c.Operator__c</field>
-        <hidden>false</hidden>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>OppScoringRule__c.Score_Change__c</field>
-        <hidden>false</hidden>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>OppScoringRule__c.Type__c</field>
-        <hidden>false</hidden>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>OppScoringRule__c.Value__c</field>
-        <hidden>false</hidden>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>Opportunity.Opp_Score__c</field>
-        <hidden>false</hidden>
-    </fieldLevelSecurities>
+        <readable>true</readable>
+    </fieldPermissions>
     <layoutAssignments>
         <layout>OppScoringRule__c-Opp Scoring Rule Layout</layout>
     </layoutAssignments>

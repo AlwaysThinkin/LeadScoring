@@ -5,6 +5,7 @@
     <label>Opp Scoring</label>
     <tab>OppScoringRule__c</tab>
     <tab>Score_All_Opps</tab>
+    <tab>standard-Lead</tab>
     <tab>standard-Campaign</tab>
     <tab>standard-Opportunity</tab>
     <tab>standard-report</tab>

@@ -297,18 +297,17 @@ private class OppScoringTests{
         String OppName='TestOpp';
         String NextStep='NextStep';
         String LeadSource='Web';
-        Boolean PrivateOpp = False;
+        Boolean PrivateOpp = True;
         Double Amt = 1000;
 
         cleanUpTestData();
         
         osrs.add(createOSR(Active, OSRType , OSRScore, OSRFieldName, OSROperator, OSRValue));    
         insert osrs;
+
           
         Test.StartTest();
         opps=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
-        PrivateOpp = True;
-        insert opps;
         Test.StopTest();
 
         Opportunity o=[Select Id, NextStep,Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
@@ -332,7 +331,7 @@ private class OppScoringTests{
         String OppName='TestOpp';
         String NextStep='NextStep';
         String LeadSource='Web';
-        Boolean PrivateOpp = False;
+        Boolean PrivateOpp = True;
         Double Amt = 1000;
 
         cleanUpTestData();
@@ -342,8 +341,6 @@ private class OppScoringTests{
           
         Test.StartTest();
         opps=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
-        PrivateOpp = True;
-        insert opps;
         Test.StopTest();
 
         Opportunity o=[Select Id, NextStep,Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];

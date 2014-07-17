@@ -34,30 +34,30 @@ private class OppScoringTests{
     static campaign c;//used to store the campaign value for creaing CM's later if needed
 
     //utility class to create dummy data to test
-    public static List<Lead> createLeads(Long NumLeads, String LN, String Cmpy, Boolean OptedOutOfEmail, String LeadSrc, Boolean OptOutFax, Double AnnualRev) {
-        List<Lead> leads = new List<Lead>{};
+    public static List<Opportunity> createOpps(Long NumOpps, String LN, String Cmpy, Boolean OptedOutOfEmail, String LeadSrc, Boolean OptOutFax, Double AnnualRev) {
+        List<Opportunity> leads = new List<Opportunity>{};
         Integer i;
-        for (i=0;i<numLeads;i++){
+        for (i=0;i<numOpps;i++){
             Lead l = new Lead(LastName=LN+i, Company=Cmpy, HasOptedOutOfEmail=OptedOutOfEmail, LeadSource=LeadSrc, HasOptedOutOfFax=OptOutFax, AnnualRevenue=AnnualRev);
             leads.add(l);
         }//for
         insert leads;
 
         return leads;
-    }//createLeads
+    }//createOpps
     
     //utility class to create dummy data to test. Overloaded to include State/Province
-    public static List<Lead> createLeads(Long NumLeads, String LN, String Cmpy, String state, Boolean OptedOutOfEmail, String LeadSrc, Boolean OptOutFax, Double AnnualRev) {
-        List<Lead> leads = new List<Lead>{};
+    public static List<Opportunity> createOpps(Long NumOpps, String LN, String Cmpy, String state, Boolean OptedOutOfEmail, String LeadSrc, Boolean OptOutFax, Double AnnualRev) {
+        List<Opportunity> leads = new List<Opportunity>{};
         Integer i;
-        for (i=0;i<numLeads;i++){
+        for (i=0;i<numOpps;i++){
             Lead l = new Lead(LastName=LN+i, Company=Cmpy, State=state, HasOptedOutOfEmail=OptedOutOfEmail, LeadSource=LeadSrc, HasOptedOutOfFax=OptOutFax, AnnualRevenue=AnnualRev);
             leads.add(l);
         }//for
         insert leads;
 
         return leads;
-    }//createLeads    
+    }//createOpps    
     
     public static void createCampaign(String CampaignName){
         Campaign c1= new Campaign(Name=CampaignName);
@@ -65,22 +65,22 @@ private class OppScoringTests{
         c=c1;//lets the campaign be referenced in the method that calls this method
     }
 
-    public static LeadScoringRule__c createLSR(Boolean Active, String LSRType, Double LSRScore, String LSRFN, String LSROperator, String LSRValue) {
-        LeadScoringRule__c lsr;
+    public static OppScoringRule__c createLSR(Boolean Active, String LSRType, Double LSRScore, String LSRFN, String LSROperator, String LSRValue) {
+        OppScoringRule__c lsr;
         if (c==null){
-            lsr=new LeadScoringRule__c(Active__c=Active, Type__c=LSRType, Score_Change__c=LSRScore, Field_Name__c=LSRFN, Operator__c=LSROperator, Value__c=LSRValue);
+            lsr=new OppScoringRule__c(Active__c=Active, Type__c=LSRType, Score_Change__c=LSRScore, Field_Name__c=LSRFN, Operator__c=LSROperator, Value__c=LSRValue);
         } else {
-            lsr=new LeadScoringRule__c(Active__c=Active, Type__c=LSRType, Campaign__c=c.id, Score_Change__c=LSRScore, Field_Name__c=LSRFN, Operator__c=LSROperator, Value__c=LSRValue);    
+            lsr=new OppScoringRule__c(Active__c=Active, Type__c=LSRType, Campaign__c=c.id, Score_Change__c=LSRScore, Field_Name__c=LSRFN, Operator__c=LSROperator, Value__c=LSRValue);    
         }
         return lsr;
     }//createLSR
 
-    public static List<CampaignMember> createCMs(Long numLeads, Id CID,List<Lead> leads,String cmStatus) {
+    public static List<CampaignMember> createCMs(Long numOpps, Id CID,List<Opportunity> leads,String cmStatus) {
        List<CampaignMember> campaignMembers = new List<CampaignMember>{};
        
-       for(Integer i = 0; i < numLeads; i++){
-            Id LeadIdi=leads[i].id;
-            CampaignMember cm=new CampaignMember( CampaignId=CID, LeadId=LeadIdi, Status=cmStatus);
+       for(Integer i = 0; i < numOpps; i++){
+            Id OppIdi=leads[i].id;
+            CampaignMember cm=new CampaignMember( CampaignId=CID, OppId=OppIdi, Status=cmStatus);
             campaignmembers.add(cm);
        }//for
         
@@ -89,13 +89,13 @@ private class OppScoringTests{
     }//createCMs
 
     public static void cleanUpTestData() {
-        List<LeadScoringRule__c> lsrs=[Select ID from LeadScoringRule__c LIMIT 500];
+        List<OppScoringRule__c> lsrs=[Select ID from OppScoringRule__c LIMIT 500];
         delete lsrs;
     }//cleanUpTestData
        
-    static testMethod void verifyLeadStringEquals(){
-        Long numLeads=1;
-        List<Lead> leads = new List<lead>{};
+    static testMethod void verifyOppStringEquals(){
+        Long numOpps=1;
+        List<Opportunity> leads = new List<Opportunity>{};
         Boolean Active=True;
         
         Double LSRScore=1;
@@ -103,9 +103,9 @@ private class OppScoringTests{
         String LSRFieldName='Company';
         String LSROperator='eQuals';//testing capitalization as well
         String LSRValue='comPany';//testing capitalization as well
-        List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+        List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
 
-        String LN='TestLead';
+        String LN='TestOpp';
         String Company=LSRValue;
         Boolean HasOptedOutOfEmail=TRUE;
         String LeadSource='Web';
@@ -119,23 +119,23 @@ private class OppScoringTests{
         insert lsrs;
         
         Test.StartTest();
-        leads=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
+        leads=createOpps(numOpps,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         
         Company='asdf';
-        List<Lead> leads2=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
+        List<Opportunity> leads2=createOpps(numOpps,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         Test.StopTest();
 
-        Lead l=[Select Id, Company,Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
-        system.assertEquals(l.Lead_Score__c,LSRScore);
+        Lead l=[Select Id, Company,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
+        system.assertEquals(l.Opp_Score__c,LSRScore);
 
-        l=[Select Id, Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Lead_Score__c,LSRScore);
-    }//verifyLeadStringEquals
+        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
+        system.assertNOTEquals(l.Opp_Score__c,LSRScore);
+    }//verifyOppStringEquals
     
     
-    static testMethod void verifyLeadStringNotEqualTo(){
-        Long numLeads=1;
-        List<Lead> leads = new List<lead>();
+    static testMethod void verifyOppStringNotEqualTo(){
+        Long numOpps=1;
+        List<Opportunity> leads = new List<Opportunity>();
         Boolean Active=True;
         
         Double LSRScore=1;
@@ -143,7 +143,7 @@ private class OppScoringTests{
         String LSRFieldName='Company';
         String LSROperator='Not Equal To';
         String LSRValue='TestString';
-        List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+        List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
 
         String LN='TestLead';
         String Company='Company';
@@ -161,18 +161,18 @@ private class OppScoringTests{
         Test.StartTest();
         leads=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         Company='TestString';
-        List<Lead> leads2=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
+        List<Opportunity> leads2=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         Test.StopTest();
 
-        Lead l=[Select Id, Company,Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
-        system.assertEquals(l.Lead_Score__c,LSRScore);
-        l=[Select Id, Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Lead_Score__c,LSRScore);
+        Lead l=[Select Id, Company,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
+        system.assertEquals(l.Opp_Score__c,LSRScore);
+        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
+        system.assertNOTEquals(l.Opp_Score__c,LSRScore);
     }//verifyLeadStringNotEqualTo
 
     static testMethod void verifyLeadPicklistContains(){
         Long numLeads=1;
-        List<Lead> leads = new List<lead>();
+        List<Opportunity> leads = new List<Opportunity>();
         Boolean Active=True;
         
         Double LSRScore=1;
@@ -180,7 +180,7 @@ private class OppScoringTests{
         String LSRFieldName='LeadSource';
         String LSROperator='Contains';
         String LSRValue='we';//note testing case sensitivity of the LSR value here
-        List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+        List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
         
         String LN='TestLead';
         String Company='Company';
@@ -198,18 +198,18 @@ private class OppScoringTests{
         Test.StartTest();
         leads=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         LeadSource='Referral';
-        List<Lead> leads2=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
+        List<Opportunity> leads2=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         Test.StopTest();
 
-        Lead l=[Select Id, Company,Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
-        system.assertEquals(l.Lead_Score__c,LSRScore);
-        l=[Select Id, Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Lead_Score__c,LSRScore);
+        Lead l=[Select Id, Company,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
+        system.assertEquals(l.Opp_Score__c,LSRScore);
+        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
+        system.assertNOTEquals(l.Opp_Score__c,LSRScore);
     }//verifyLeadPicklistContains
 
     static testMethod void verifyLeadPicklistDoesNotContain(){
         Long numLeads=1;
-        List<Lead> leads = new List<lead>();
+        List<Opportunity> leads = new List<Opportunity>();
         Boolean Active=True;
         
         Double LSRScore=1;
@@ -218,7 +218,7 @@ private class OppScoringTests{
         String LSROperator='Does Not Contain';
         String LSRValue='eferr';
 
-        List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+        List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
         
         String LN='TestLead';
         String Company='Company';
@@ -236,20 +236,20 @@ private class OppScoringTests{
         Test.StartTest();
         leads=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         LeadSource='ReFerral';//note testing case sensitivity here as well
-        List<Lead> leads2=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
+        List<Opportunity> leads2=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         Test.StopTest();
 
 
-        Lead l=[Select Id, Company,Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
-        system.assertEquals(l.Lead_Score__c,LSRScore);
-        l=[Select Id, LeadSource,Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
+        Lead l=[Select Id, Company,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
+        system.assertEquals(l.Opp_Score__c,LSRScore);
+        l=[Select Id, LeadSource,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
         system.debug('Lead Source: '+l.LeadSource +' should not contain '+LeadSource);
-        system.assertNOTEquals(l.Lead_Score__c,LSRScore);
+        system.assertNOTEquals(l.Opp_Score__c,LSRScore);
     }//verifyLeadPicklistDoesNotContain
 
     static testMethod void verifyLeadStringStartsWith(){
         Long numLeads=1;
-        List<Lead> leads = new List<lead>();
+        List<Opportunity> leads = new List<Opportunity>();
         Boolean Active=True;
         
         Double LSRScore=1;
@@ -258,7 +258,7 @@ private class OppScoringTests{
         String LSROperator='Starts With';
         String LSRValue='Test';
 
-        List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+        List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
         
         String LN='TestLead';
         String Company='Company';
@@ -276,18 +276,18 @@ private class OppScoringTests{
         Test.StartTest();
         leads=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         LN='LeadTest';
-        List<Lead> leads2=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
+        List<Opportunity> leads2=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         Test.StopTest();
 
-        Lead l=[Select Id, Company,Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
-        system.assertEquals(l.Lead_Score__c,LSRScore);
-        l=[Select Id, Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Lead_Score__c,LSRScore);
+        Lead l=[Select Id, Company,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
+        system.assertEquals(l.Opp_Score__c,LSRScore);
+        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
+        system.assertNOTEquals(l.Opp_Score__c,LSRScore);
     }//verifyLeadStringStartsWith
 
   static testMethod void verifyLeadBooleanEquals(){
         Long numLeads=1;
-        List<Lead> leads = new List<lead>();
+        List<Opportunity> leads = new List<Opportunity>();
         Boolean Active=True;
         
         Double LSRScore=1;
@@ -296,7 +296,7 @@ private class OppScoringTests{
         String LSROperator='Equals';
         String LSRValue='True';
 
-        List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+        List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
         
         String LN='TestLead';
         String Company='Company';
@@ -315,7 +315,7 @@ private class OppScoringTests{
         leads=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         createCampaign(CampaignName);
         List<CampaignMember> cms=createCMs(numLeads, c.Id,leads,cmStatus);
-        List<Lead> leads2=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
+        List<Opportunity> leads2=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         cmStatus='Sent';
         List<CampaignMember> cms2=createCMs(numLeads, c.Id,leads2,cmStatus);        
         
@@ -324,15 +324,15 @@ private class OppScoringTests{
         insert cms2;
         Test.StopTest();
 
-        Lead l=[Select Id, Company,Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
+        Lead l=[Select Id, Company,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
         system.assertEquals(l.Campaign_Score__c,LSRScore);
-        l=[Select Id, Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
+        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
         system.assertNOTEquals(l.Campaign_Score__c,LSRScore);
     }//verifyLeadBooleanEquals
     
   static testMethod void verifyLeadBooleanNotEqualTo(){
        Long numLeads=1;
-        List<Lead> leads = new List<lead>();
+        List<Opportunity> leads = new List<Opportunity>();
         Boolean Active=True;
         
         Double LSRScore=1;
@@ -341,7 +341,7 @@ private class OppScoringTests{
         String LSROperator='Not Equal To';
         String LSRValue='True';
 
-        List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+        List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
         
         String LN='TestLead';
         String Company='Company';
@@ -360,7 +360,7 @@ private class OppScoringTests{
         leads=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         createCampaign(CampaignName);
         List<CampaignMember> cms=createCMs(numLeads, c.Id,leads,cmStatus);
-        List<Lead> leads2=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
+        List<Opportunity> leads2=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         cmStatus='Responded';
         List<CampaignMember> cms2=createCMs(numLeads, c.Id,leads2,cmStatus);        
         
@@ -369,15 +369,15 @@ private class OppScoringTests{
         insert cms2;
         Test.StopTest();
 
-        Lead l=[Select Id, Company,Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
+        Lead l=[Select Id, Company,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
         system.assertEquals(l.Campaign_Score__c,LSRScore);
-        l=[Select Id, Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
+        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
         system.assertNOTEquals(l.Campaign_Score__c,LSRScore);
     }//verifyLeadBooleanNotEqualTo
 
   static testMethod void verifyLeadDoubleEquals(){
         Long numLeads=1;
-        List<Lead> leads = new List<lead>();
+        List<Opportunity> leads = new List<Opportunity>();
         Boolean Active=True;
         
         Double LSRScore=1;
@@ -386,7 +386,7 @@ private class OppScoringTests{
         String LSROperator='Equals';
         String LSRValue='1000';
 
-        List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+        List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
         
         String LN='TestLead';
         String Company='Company';
@@ -404,18 +404,18 @@ private class OppScoringTests{
         Test.StartTest();
         leads=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         AnnualRev=2000;
-        List<Lead> leads2=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
+        List<Opportunity> leads2=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         Test.StopTest();
 
-        Lead l=[Select Id, Company,Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
-        system.assertEquals(l.Lead_Score__c,LSRScore);
-        l=[Select Id, Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Lead_Score__c,LSRScore);
+        Lead l=[Select Id, Company,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
+        system.assertEquals(l.Opp_Score__c,LSRScore);
+        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
+        system.assertNOTEquals(l.Opp_Score__c,LSRScore);
     }//verifyLeadDoubleEquals
 
   static testMethod void verifyLeadDoubleNotEqualTo(){
         Long numLeads=1;
-        List<Lead> leads = new List<lead>();
+        List<Opportunity> leads = new List<Opportunity>();
         Boolean Active=True;
         
         Double LSRScore=1;
@@ -424,7 +424,7 @@ private class OppScoringTests{
         String LSROperator='Not Equal To';
         String LSRValue='999';
 
-        List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+        List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
         
         String LN='TestLead';
         String Company='Company';
@@ -442,18 +442,18 @@ private class OppScoringTests{
         Test.StartTest();
         leads=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         AnnualRev=999;
-        List<Lead> leads2=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
+        List<Opportunity> leads2=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         Test.StopTest();
 
-        Lead l=[Select Id, Company,Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
-        system.assertEquals(l.Lead_Score__c,LSRScore);
-        l=[Select Id, Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Lead_Score__c,LSRScore);
+        Lead l=[Select Id, Company,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
+        system.assertEquals(l.Opp_Score__c,LSRScore);
+        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
+        system.assertNOTEquals(l.Opp_Score__c,LSRScore);
     }//verifyLeadDoubleNotEqualTo
 
   static testMethod void verifyLeadDoubleGreaterThan(){
         Long numLeads=1;
-        List<Lead> leads = new List<lead>();
+        List<Opportunity> leads = new List<Opportunity>();
         Boolean Active=True;
         
         Double LSRScore=1;
@@ -462,7 +462,7 @@ private class OppScoringTests{
         String LSROperator='Greater Than';
         String LSRValue='999';
 
-        List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+        List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
         
         String LN='TestLead';
         String Company='Company';
@@ -480,18 +480,18 @@ private class OppScoringTests{
         Test.StartTest();
         leads=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         AnnualRev=998;
-        List<Lead> leads2=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
+        List<Opportunity> leads2=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         Test.StopTest();
 
-        Lead l=[Select Id, Company,Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
-        system.assertEquals(l.Lead_Score__c,LSRScore);
-        l=[Select Id, Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Lead_Score__c,LSRScore);
+        Lead l=[Select Id, Company,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
+        system.assertEquals(l.Opp_Score__c,LSRScore);
+        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
+        system.assertNOTEquals(l.Opp_Score__c,LSRScore);
     }//verifyLeadDoubleGreaterThan
 
      static testMethod void verifyLeadDoubleGreaterorEqual(){
         Long numLeads=1;
-        List<Lead> leads = new List<lead>();
+        List<Opportunity> leads = new List<Opportunity>();
         Boolean Active=True;
         
         Double LSRScore=1;
@@ -500,7 +500,7 @@ private class OppScoringTests{
         String LSROperator='Greater or Equal';
         String LSRValue='1000';
 
-        List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+        List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
         
         String LN='TestLead';
         String Company='Company';
@@ -519,25 +519,25 @@ private class OppScoringTests{
         leads=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         AnnualRev=999;
         LeadScoring.setEvaluateLeadsAlreadyCalled(FALSE);
-        List<Lead> leads2=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
+        List<Opportunity> leads2=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         AnnualRev=1001;
         LeadScoring.setEvaluateLeadsAlreadyCalled(FALSE);
-        List<Lead> leads3=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
+        List<Opportunity> leads3=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         Test.StopTest();
         
-        Lead l=[Select Id, Company,Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
-        system.assertEquals(LSRScore,l.Lead_Score__c);
+        Lead l=[Select Id, Company,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
+        system.assertEquals(LSRScore,l.Opp_Score__c);
 
-        l=[Select Id, Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
-        system.assertNOTEquals(LSRScore,l.Lead_Score__c);
-        l=[Select Id, Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads3[0].Id LIMIT 1];
-        system.assertEquals(l.Lead_Score__c,LSRScore);
+        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
+        system.assertNOTEquals(LSRScore,l.Opp_Score__c);
+        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads3[0].Id LIMIT 1];
+        system.assertEquals(l.Opp_Score__c,LSRScore);
         
     }//verifyLeadDoubleGreaterorEqual
 
   static testMethod void verifyLeadDoubleLessOrEqual(){
         Long numLeads=1;
-        List<Lead> leads = new List<lead>();
+        List<Opportunity> leads = new List<Opportunity>();
         Boolean Active=True;
         
         Double LSRScore=1;
@@ -546,7 +546,7 @@ private class OppScoringTests{
         String LSROperator='Less Or Equal';
         String LSRValue='1000';
 
-        List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+        List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
         
         String LN='TestLead';
         String Company='Company';
@@ -565,23 +565,23 @@ private class OppScoringTests{
         leads=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         AnnualRev=1001;
         LeadScoring.setEvaluateLeadsAlreadyCalled(FALSE);
-        List<Lead> leads2=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
+        List<Opportunity> leads2=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         AnnualRev=999;
         LeadScoring.setEvaluateLeadsAlreadyCalled(FALSE);
-        List<Lead> leads3=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
+        List<Opportunity> leads3=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         Test.StopTest();
 
-        Lead l=[Select Id, Company,Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
-        system.assertEquals(l.Lead_Score__c,LSRScore);
-        l=[Select Id, Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Lead_Score__c,LSRScore);
-        l=[Select Id, Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads3[0].Id LIMIT 1];
-        system.assertEquals(l.Lead_Score__c,LSRScore);
+        Lead l=[Select Id, Company,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
+        system.assertEquals(l.Opp_Score__c,LSRScore);
+        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
+        system.assertNOTEquals(l.Opp_Score__c,LSRScore);
+        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads3[0].Id LIMIT 1];
+        system.assertEquals(l.Opp_Score__c,LSRScore);
     }//verifyLeadDoubleLessOrEqual
 
   static testMethod void verifyLeadDoubleLessThan(){
         Long numLeads=1;
-        List<Lead> leads = new List<lead>();
+        List<Opportunity> leads = new List<Opportunity>();
         Boolean Active=True;
         
         Double LSRScore=1;
@@ -590,7 +590,7 @@ private class OppScoringTests{
         String LSROperator='Less Than';
         String LSRValue='1001';
 
-        List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+        List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
         
         String LN='TestLead';
         String Company='Company';
@@ -608,18 +608,18 @@ private class OppScoringTests{
         Test.StartTest();
         leads=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         AnnualRev=1002;
-        List<Lead> leads2=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
+        List<Opportunity> leads2=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         Test.StopTest();
 
-        Lead l=[Select Id, Company,Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
-        system.assertEquals(l.Lead_Score__c,LSRScore);
-        l=[Select Id, Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Lead_Score__c,LSRScore);
+        Lead l=[Select Id, Company,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
+        system.assertEquals(l.Opp_Score__c,LSRScore);
+        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
+        system.assertNOTEquals(l.Opp_Score__c,LSRScore);
     }//verifyLeadDoubleLessThan
 
   static testMethod void verifyLeadDateEquals(){
         Long numLeads=1;
-        List<Lead> leads = new List<lead>();
+        List<Opportunity> leads = new List<Opportunity>();
         Boolean Active=True;
         
         Double LSRScore=1;
@@ -628,7 +628,7 @@ private class OppScoringTests{
         String LSROperator='Equals';
         String LSRValue=String.valueOf(DateTime.now());
 
-        List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+        List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
         
         String LN='TestLead';
         String Company='Company';
@@ -647,15 +647,15 @@ private class OppScoringTests{
         leads=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         Test.StopTest();
 
-        Lead l=[Select Id, Company,Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
-//        system.assertEquals(l.Lead_Score__c,LSRScore);
+        Lead l=[Select Id, Company,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
+//        system.assertEquals(l.Opp_Score__c,LSRScore);
 //Date criteria don't yet work
         //Negative test in next test method
     }//verifyLeadDateEquals
 
   static testMethod void verifyLeadDateEqualsNegativeTest(){
         Long numLeads=1;
-        List<Lead> leads = new List<lead>();
+        List<Opportunity> leads = new List<Opportunity>();
         Boolean Active=True;
         
         Double LSRScore=1;
@@ -666,7 +666,7 @@ private class OppScoringTests{
         DateTime dateValue2=dateValue.addDays(3);
         String LSRValue=String.valueOf(dateValue2);
 
-        List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+        List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
         
         String LN='TestLead';
         String Company='Company';
@@ -685,14 +685,14 @@ private class OppScoringTests{
         leads=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         Test.StopTest();
 
-        Lead l=[Select Id, CreatedDate,Company,Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
+        Lead l=[Select Id, CreatedDate,Company,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
         system.debug('Created Date: '+l.CreatedDate+' ; LSRValue : '+LSRValue);
-        system.assertNOTEquals(l.Lead_Score__c,LSRScore);
+        system.assertNOTEquals(l.Opp_Score__c,LSRScore);
     }//verifyLeadDateEqualsNegativeTest
 
  static testMethod void verifyLeadDateNotEqualTo(){
         Long numLeads=1;
-        List<Lead> leads = new List<lead>();
+        List<Opportunity> leads = new List<Opportunity>();
         Boolean Active=True;
         
         Double LSRScore=1;
@@ -703,7 +703,7 @@ private class OppScoringTests{
         Date dateValue2=dateValue.addDays(2);
         String LSRValue=String.valueOf(dateValue2);
 
-        List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+        List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
         
         String LN='TestLead';
         String Company='Company';
@@ -722,15 +722,15 @@ private class OppScoringTests{
         leads=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         Test.StopTest();
 
-        Lead l=[Select Id, Company,Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
-//        system.assertEquals(l.Lead_Score__c,LSRScore);
+        Lead l=[Select Id, Company,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
+//        system.assertEquals(l.Opp_Score__c,LSRScore);
 //Date criteria don't yet work
         //Negative test in next test method
     }//verifyLeadDateNotEqualTo
 
   static testMethod void verifyLeadDateNotEqualToNegativeTest(){
         Long numLeads=1;
-        List<Lead> leads = new List<lead>();
+        List<Opportunity> leads = new List<Opportunity>();
         Boolean Active=True;
         
         Double LSRScore=1;
@@ -739,7 +739,7 @@ private class OppScoringTests{
         String LSROperator='Not Equal To';
         String LSRValue=String.valueOf(Date.today());
 
-        List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+        List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
         
         String LN='TestLead';
         String Company='Company';
@@ -758,13 +758,13 @@ private class OppScoringTests{
         leads=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         Test.StopTest();
 
-        Lead l=[Select Id, Company,Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Lead_Score__c,LSRScore);
+        Lead l=[Select Id, Company,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
+        system.assertNOTEquals(l.Opp_Score__c,LSRScore);
     }//verifyLeadDateNotEqualToNegativeTest
 
   static testMethod void verifyDupeRulesDoesntGack(){
         Long numLeads=1;
-        List<Lead> leads = new List<lead>();
+        List<Opportunity> leads = new List<Opportunity>();
         Boolean Active=True;
         
         Double LSRScore=1;
@@ -773,7 +773,7 @@ private class OppScoringTests{
         String LSROperator='Equals';
         String LSRValue='Company';
 
-        List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+        List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
         
         String LN='TestLead';
         String Company='Company';
@@ -793,13 +793,13 @@ private class OppScoringTests{
         leads=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         Test.StopTest();
 
-        Lead l=[Select Id, Company,Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
-        system.assertEquals(l.Lead_Score__c,LSRScore*2);
+        Lead l=[Select Id, Company,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
+        system.assertEquals(l.Opp_Score__c,LSRScore*2);
     }//verifyDupeRulesDoesntGack
 
   static testMethod void verifyNullFieldNameDoesntGack(){
         Long numLeads=1;
-        List<Lead> leads = new List<lead>();
+        List<Opportunity> leads = new List<Opportunity>();
         Boolean Active=True;
         
         Double LSRScore=1;
@@ -808,7 +808,7 @@ private class OppScoringTests{
         String LSROperator='Equals';
         String LSRValue='Company';
 
-        List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+        List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
         
         String LN='TestLead';
         String Company='Company';
@@ -830,13 +830,13 @@ private class OppScoringTests{
         leads=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         Test.StopTest();
 
-        Lead l=[Select Id, Company,Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Lead_Score__c,LSRScore);
+        Lead l=[Select Id, Company,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
+        system.assertNOTEquals(l.Opp_Score__c,LSRScore);
     }//verifyNullFieldNameDoesntGack
     
 static testMethod void verifyNullOperatorDoesntGack(){
         Long numLeads=1;
-        List<Lead> leads = new List<lead>();
+        List<Opportunity> leads = new List<Opportunity>();
         Boolean Active=True;
         
         Double LSRScore=1;
@@ -845,7 +845,7 @@ static testMethod void verifyNullOperatorDoesntGack(){
         String LSROperator=null;
         String LSRValue='Company';
 
-        List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+        List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
         
         String LN='TestLead';
         String Company='Company';
@@ -864,13 +864,13 @@ static testMethod void verifyNullOperatorDoesntGack(){
         leads=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         Test.StopTest();
 
-        Lead l=[Select Id, Company,Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Lead_Score__c,LSRScore);
+        Lead l=[Select Id, Company,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
+        system.assertNOTEquals(l.Opp_Score__c,LSRScore);
     }//verifyNullOperatorDoesntGack
 
   static testMethod void verifyInvalidFieldNameDoesntGack(){
         Long numLeads=1;
-        List<Lead> leads = new List<lead>();
+        List<Opportunity> leads = new List<Opportunity>();
         Boolean Active=True;
         
         Double LSRScore=1;
@@ -879,7 +879,7 @@ static testMethod void verifyNullOperatorDoesntGack(){
         String LSROperator='Equals';
         String LSRValue='Company';
 
-        List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+        List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
         
         String LN='TestLead';
         String Company='Company';
@@ -901,7 +901,7 @@ static testMethod void verifyNullOperatorDoesntGack(){
     
     static testMethod void verifyInvalidOperatorDoesntGack(){
         Long numLeads=1;
-        List<Lead> leads = new List<lead>();
+        List<Opportunity> leads = new List<Opportunity>();
         Boolean Active=True;
         
         Double LSRScore=1;
@@ -910,7 +910,7 @@ static testMethod void verifyNullOperatorDoesntGack(){
         String LSROperator='bob';
         String LSRValue='Company';
 
-        List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+        List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
         
         String LN='TestLead';
         String Company='Company';
@@ -929,13 +929,13 @@ static testMethod void verifyNullOperatorDoesntGack(){
         leads=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         Test.StopTest();
 
-        Lead l=[Select Id, Company,Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Lead_Score__c,LSRScore);
+        Lead l=[Select Id, Company,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
+        system.assertNOTEquals(l.Opp_Score__c,LSRScore);
     }//verifyInvalidOperatorDoesntGack
 
     static testMethod void verifyFieldNameCapitalsDontGack(){
         Long numLeads=1;
-        List<Lead> leads = new List<lead>();
+        List<Opportunity> leads = new List<Opportunity>();
         Boolean Active=True;
         
         Double LSRScore=1;
@@ -944,7 +944,7 @@ static testMethod void verifyNullOperatorDoesntGack(){
         String LSROperator='Equals';
         String LSRValue='Company';
 
-        List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+        List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
         
         String LN='TestLead';
         String Company='Company';
@@ -965,13 +965,13 @@ static testMethod void verifyNullOperatorDoesntGack(){
         leads=createLeads(numLeads,LN,Company,HasOptedOutOfEmail, LeadSource, HasOptedOutOfFax,AnnualRev);
         Test.StopTest();
 
-        Lead l=[Select Id, Company,Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
-        system.assertEquals(l.Lead_Score__c,LSRScore*2);
+        Lead l=[Select Id, Company,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
+        system.assertEquals(l.Opp_Score__c,LSRScore*2);
     }//verifyFieldNameCapitalsDontGack
 
     static testMethod void verifyDeleteTrigger(){
         Long numLeads=1;
-        List<Lead> leads = new List<lead>();
+        List<Opportunity> leads = new List<Opportunity>();
         Boolean Active=True;
         
         Double LSRScore=5;
@@ -980,7 +980,7 @@ static testMethod void verifyNullOperatorDoesntGack(){
         String LSROperator='Equals';
         String LSRValue='Sent';
 
-        List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+        List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
         
         String LN='TestLead';
         String Company='Company';
@@ -1006,14 +1006,14 @@ static testMethod void verifyNullOperatorDoesntGack(){
 //      system.debug('CampaignMemberScore for the first is :'+cms[0].Campaign_Score__c);
         system.assertEquals(LSRScore, cms[0].Campaign_Score__c);
 
-        Lead l=[Select Id, Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
+        Lead l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
         system.assertEquals(LSRScore, l.Campaign_Score__c);
 //        system.debug('Campaign score on the lead is :'+l.Campaign_Score__c);
         
         delete cms;
         
         test.stopTest();
-        l=[Select Id, Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
+        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
         system.assertEquals(0, l.Campaign_Score__c);
     }//verifyDeleteTrigger 
 
@@ -1024,20 +1024,20 @@ static testMethod void verifyNullOperatorDoesntGack(){
         String LSRFieldName='Status';
         String LSROperator='Equals';
         String LSRValue='Open';
-        List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+        List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
 
         cleanUpTestData();
         lsrs.add(createLSR(Active, LSRType , LSRScore, LSRFieldName, LSROperator, LSRValue));    
 
         insert lsrs;
-        LeadScoringRule__c lsr=[Select Id, Name, Field_Label__c, Field_Name__c FROM LeadScoringRule__c WHERE Id=:lsrs[0].Id LIMIT 1];
+        OppScoringRule__c lsr=[Select Id, Name, Field_Label__c, Field_Name__c FROM OppScoringRule__c WHERE Id=:lsrs[0].Id LIMIT 1];
         //Check it first upon insert
         system.assertEquals(lsr.Field_Label__c,Schema.SObjectType.CampaignMember.fields.getMap().get(LSRFieldName).getDescribe().getLabel());
         
         LSRFieldName='email';
         lsr.Field_Name__c=LSRFieldName;
         update lsr;
-        lsr=[Select Id, Name, Field_Label__c, Field_Name__c FROM LeadScoringRule__c WHERE Id=:lsrs[0].Id LIMIT 1];
+        lsr=[Select Id, Name, Field_Label__c, Field_Name__c FROM OppScoringRule__c WHERE Id=:lsrs[0].Id LIMIT 1];
         //Check again after update
         system.assertEquals(lsr.Field_Label__c,Schema.SObjectType.Lead.fields.getMap().get(LSRFieldName).getDescribe().getLabel());
     }//verifyLSRLabelAndName
@@ -1051,7 +1051,7 @@ static testMethod void verifyNullOperatorDoesntGack(){
         //In this case, the Visualforce page named 'success' is the starting point of this test method. 
         Test.setCurrentPage(pageRef);
 
-        LeadScoringRule__c lsr=new LeadScoringRule__c();
+        OppScoringRule__c lsr=new OppScoringRule__c();
         lsr.Type__c='Campaign Member';
         lsr.Field_Name__c='HasResponded';//this will run the checkbox check
         lsr.Score_Change__c=5;
@@ -1084,10 +1084,10 @@ static testMethod void verifyNullOperatorDoesntGack(){
             Long NumLeads=10;//test methods can't test more than ~100 records inserted, so no point in even trying as the app scales over 200 lead rules
             Long NumLeadRules=10;
             
-            List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+            List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
             cleanUpTestData();
             
-            List<Lead> leads=createLeads(NumLeads, 'Lead', 'Company', False, 'Web', False,1000);
+            List<Opportunity> leads=createLeads(NumLeads, 'Lead', 'Company', False, 'Web', False,1000);
       
             for (Integer i=0;i<NumLeadRules;i++){
                 lsrs.add(createLSR(TRUE, 'Lead', 1, 'Company', 'equals', 'Company'));
@@ -1101,12 +1101,12 @@ static testMethod void verifyNullOperatorDoesntGack(){
                 Database.executeBatch(initLS, 10);
             Test.StopTest();
                 
-            Lead l=[Select Id, Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
+            Lead l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
                 
-    //        system.debug('Assert Lead_Score__c = 1 (or 10, or 100).  Actual: ' +l.Lead_Score__c);
-            System.AssertEquals(NumLeadRules,l.Lead_Score__c);
-    //        system.debug('Assert Total_Lead_Score__c = '+NumLeadRules+'.  Actual:' +l.Total_Lead_Score__c);
-            System.AssertEquals(NumLeadRules,l.Total_Lead_Score__c);
+    //        system.debug('Assert Opp_Score__c = 1 (or 10, or 100).  Actual: ' +l.Opp_Score__c);
+            System.AssertEquals(NumLeadRules,l.Opp_Score__c);
+    //        system.debug('Assert Total_Opp_Score__c = '+NumLeadRules+'.  Actual:' +l.Total_Opp_Score__c);
+            System.AssertEquals(NumLeadRules,l.Total_Opp_Score__c);
         }//if 1
    }//testLeadScoringInitialize */
    
@@ -1115,11 +1115,11 @@ static testMethod void verifyNullOperatorDoesntGack(){
             Long NumLeads=1;//test methods can't test more than ~100 records inserted, so no point in even trying as the app scales over 200 lead rules
             Integer i;
             Integer cmScore=2;
-            List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+            List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
 
             cleanUpTestData();
             
-            List<Lead> leads=createLeads(NumLeads, 'Lead', 'Company', False, 'Web', False,1000);
+            List<Opportunity> leads=createLeads(NumLeads, 'Lead', 'Company', False, 'Web', False,1000);
             createCampaign('Campaign 1');
             List<CampaignMember> cms=createCMs(NumLeads, c.Id,leads,'Sent');
             insert cms;
@@ -1136,15 +1136,15 @@ static testMethod void verifyNullOperatorDoesntGack(){
                 Database.executeBatch(initCS, 10);
             Test.StopTest();
 
-            Lead l=[Select Id, Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
+            Lead l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads[0].Id LIMIT 1];
             CampaignMember cm=[Select Id, Campaign_Score__c FROM CampaignMember WHERE LeadId=:leads[0].Id LIMIT 1];
             
 //            system.debug('Assert cm Campaign_Score__c = '+cmScore+'.  Actual: ' +cm.Campaign_Score__c);
             System.AssertEquals(cmScore*NumCMRules,cm.Campaign_Score__c);
 //            system.debug('Assert lead Campaign_Score__c = '+cmScore+'.  Actual: ' +l.Campaign_Score__c);
             System.AssertEquals(cmScore*NumCMRules,l.Campaign_Score__c);
-//            system.debug('Assert Total_Lead_Score__c = '+NumCMRules+cmScore+'.  Actual:' +l.Total_Lead_Score__c);
-            System.AssertEquals(NumCMRules*cmScore,l.Total_Lead_Score__c);
+//            system.debug('Assert Total_Opp_Score__c = '+NumCMRules+cmScore+'.  Actual:' +l.Total_Opp_Score__c);
+            System.AssertEquals(NumCMRules*cmScore,l.Total_Opp_Score__c);
        }//if 1            
    }//testLeadCampaignScoreInitialize */
 
@@ -1162,7 +1162,7 @@ static testMethod void verifyNullOperatorDoesntGack(){
    
    static testMethod void verifyLongRuleNameDoesntBreak(){
         Long numLeads=1;
-        List<Lead> leads = new List<lead>();
+        List<Opportunity> leads = new List<Opportunity>();
         Boolean Active=True;
         
         Double LSRScore=1;
@@ -1171,7 +1171,7 @@ static testMethod void verifyNullOperatorDoesntGack(){
         String LSROperator='Does Not Contain';
         String LSRValue='123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890';
 
-        List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+        List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
         
         cleanUpTestData();
         
@@ -1185,7 +1185,7 @@ static testMethod void verifyNullOperatorDoesntGack(){
     static testMethod void testBulkLeadInsertForScoring()
     {
         Long numLeads=40;
-        List<Lead> leads = new List<lead>{};
+        List<Opportunity> leads = new List<Opportunity>{};
         Set<Id> leadIds = new Set<Id>();
         Boolean Active=True;
         
@@ -1194,7 +1194,7 @@ static testMethod void verifyNullOperatorDoesntGack(){
         String LSRFieldName='Company';
         String LSROperator='eQuals';//testing capitalization as well
         String LSRValue='comPany';//testing capitalization as well
-        List<LeadScoringRule__c> lsrs=new List<LeadScoringRule__c>();
+        List<OppScoringRule__c> lsrs=new List<OppScoringRule__c>();
 
         String LN='TestLead';
         String Company=LSRValue;
@@ -1218,19 +1218,19 @@ static testMethod void verifyNullOperatorDoesntGack(){
         {
             leadIds.add(lead.Id);
         }
-        List<Lead> leadList=[Select Id, Company,Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c, Lassy__r.User__r.ProfileId FROM Lead WHERE Id in :leadIds];
+        List<Opportunity> leadList=[Select Id, Company,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c, Lassy__r.User__r.ProfileId FROM Lead WHERE Id in :leadIds];
         System.debug('No Of leads inserted ... ' + leadList.size());
         Integer i = 1;
         for(Lead l : leadList)
         {
-            System.debug('Lead ' + i + 'score :: ' + l.Lead_Score__c);
+            System.debug('Lead ' + i + 'score :: ' + l.Opp_Score__c);
             i++;    
-            system.assertEquals(LSRScore,l.Lead_Score__c);
+            system.assertEquals(LSRScore,l.Opp_Score__c);
             //system.assertEquals(ADMISSION_COUNSELOR_PROFILE,l.Lassy__r.User__r.ProfileId);
             
         } 
-        //l=[Select Id, Lead_Score__c, Campaign_Score__c, Total_Lead_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
-        //system.assertNOTEquals(l.Lead_Score__c,LSRScore);
+        //l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Lead WHERE Id=:leads2[0].Id LIMIT 1];
+        //system.assertNOTEquals(l.Opp_Score__c,LSRScore);
     } // testBulkLeadInsertForScoring
  
     

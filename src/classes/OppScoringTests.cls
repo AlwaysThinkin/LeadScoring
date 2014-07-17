@@ -34,11 +34,11 @@ private class OppScoringTests{
     static campaign c;//used to store the campaign value for creaing CM's later if needed
 
     //utility class to create dummy data to test
-    public static List<Opportunity> createOpps(Long NumOpps, String OppName, String NxtS, String LeadSrc) {
+    public static List<Opportunity> createOpps(Long NumOpps, String OppName, String NxtS, String LeadSrc, Boolean PrivateOpp, Double Amt) {
         List<Opportunity> opps = new List<Opportunity>{};
         Integer i;
         for (i=0;i<numOpps;i++){
-            Opportunity l = new Opportunity(Name=OppName+i, NextStep=NxtS, LeadSource=LeadSrc);
+            Opportunity l = new Opportunity(Name=OppName+i, NextStep=NxtS, LeadSource=LeadSrc, IsPrivate=PrivateOpp, Amount = Amt);
             opps.add(l);
         }//for
         insert opps;
@@ -75,6 +75,7 @@ private class OppScoringTests{
         return osr;
     }//createOSR
 
+/* OppFork cm May not be necessary to geneate CMs for OppScoring
     public static List<CampaignMember> createCMs(Long numOpps, Id CID,List<Opportunity> opps,String cmStatus) {
        List<CampaignMember> campaignMembers = new List<CampaignMember>{};
        
@@ -87,7 +88,7 @@ private class OppScoringTests{
        return campaignMembers;
 
     }//createCMs
-
+*/
     public static void cleanUpTestData() {
         List<OppScoringRule__c> osrs=[Select ID from OppScoringRule__c LIMIT 500];
         delete osrs;
@@ -108,6 +109,8 @@ private class OppScoringTests{
         String OppName='TestOpp';
         String NextStep=OSRValue;
         String LeadSource='Web';
+        Boolean PrivateOpp = False;
+        Double Amt = 1000;
         String CampaignName='';
         
         cleanUpTestData();
@@ -116,17 +119,17 @@ private class OppScoringTests{
         insert osrs;
         
         Test.StartTest();
-        opps=createOpps(numOpps,OppName,NextStep, LeadSource);
+        opps=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
         
         NextStep='asdf';
-        List<Opportunity> opps2=createOpps(numOpps,OppName,NextStep, LeadSource);
+        List<Opportunity> opps2=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
         Test.StopTest();
 
-        Opportunity o=[Select Id, NextStep,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
-        system.assertEquals(l.Opp_Score__c,OSRScore);
+        Opportunity o=[Select Id, NextStep,Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
+        system.assertEquals(o.Opp_Score__c,OSRScore);
 
-        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps2[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Opp_Score__c,OSRScore);
+        o=[Select Id, Opp_Score__c FROM Opportunity WHERE Id=:opps2[0].Id LIMIT 1];
+        system.assertNOTEquals(o.Opp_Score__c,OSRScore);
     }//verifyOppStringEquals
     
     
@@ -145,6 +148,8 @@ private class OppScoringTests{
         String OppName='TestOpp';
         String NextStep='NextStep';
         String LeadSource='Web';
+        Boolean PrivateOpp = False;
+        Double Amt = 1000;
         String CampaignName='2009-Q3-Event-Dreamforce 2009';
 
         cleanUpTestData();
@@ -153,15 +158,15 @@ private class OppScoringTests{
         insert osrs;
         
         Test.StartTest();
-        opps=createOpps(numOpps,OppName,NextStep, LeadSource);
+        opps=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
         NextStep='TestString';
-        List<Opportunity> opps2=createOpps(numOpps,OppName,NextStep, LeadSource);
+        List<Opportunity> opps2=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
         Test.StopTest();
 
-        Opportunity o=[Select Id, NextStep,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
-        system.assertEquals(l.Opp_Score__c,OSRScore);
-        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps2[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Opp_Score__c,OSRScore);
+        Opportunity o=[Select Id, NextStep,Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
+        system.assertEquals(o.Opp_Score__c,OSRScore);
+        o=[Select Id, Opp_Score__c FROM Opportunity WHERE Id=:opps2[0].Id LIMIT 1];
+        system.assertNOTEquals(o.Opp_Score__c,OSRScore);
     }//verifyOppStringNotEqualTo
 
     static testMethod void verifyOppPicklistContains(){
@@ -179,6 +184,8 @@ private class OppScoringTests{
         String OppName='TestOpp';
         String NextStep='NextStep';
         String LeadSource='Web';
+        Boolean PrivateOpp = False;
+        Double Amt = 1000;
         String CampaignName='2009-Q3-Event-Dreamforce 2009';
 
         cleanUpTestData();
@@ -187,15 +194,15 @@ private class OppScoringTests{
         insert osrs;
         
         Test.StartTest();
-        opps=createOpps(numOpps,OppName,NextStep, LeadSource);
+        opps=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
         LeadSource='Referral';
-        List<Opportunity> opps2=createOpps(numOpps,OppName,NextStep, LeadSource);
+        List<Opportunity> opps2=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
         Test.StopTest();
 
-        Opportunity o=[Select Id, NextStep,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
-        system.assertEquals(l.Opp_Score__c,OSRScore);
-        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps2[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Opp_Score__c,OSRScore);
+        Opportunity o=[Select Id, NextStep,Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
+        system.assertEquals(o.Opp_Score__c,OSRScore);
+        o=[Select Id, Opp_Score__c FROM Opportunity WHERE Id=:opps2[0].Id LIMIT 1];
+        system.assertNOTEquals(o.Opp_Score__c,OSRScore);
     }//verifyOppPicklistContains
 
     static testMethod void verifyOppPicklistDoesNotContain(){
@@ -214,6 +221,8 @@ private class OppScoringTests{
         String OppName='TestOpp';
         String NextStep='NextStep';
         String LeadSource='Web';
+        Boolean PrivateOpp = False;
+        Double Amt = 1000;
         String CampaignName='2009-Q3-Event-Dreamforce 2009';
 
         cleanUpTestData();
@@ -222,17 +231,17 @@ private class OppScoringTests{
         insert osrs;
         
         Test.StartTest();
-        opps=createOpps(numOpps,OppName,NextStep, LeadSource);
+        opps=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
         LeadSource='ReFerral';//note testing case sensitivity here as well
-        List<Opportunity> opps2=createOpps(numOpps,OppName,NextStep, LeadSource);
+        List<Opportunity> opps2=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
         Test.StopTest();
 
 
-        Opportunity o=[Select Id, NextStep,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
-        system.assertEquals(l.Opp_Score__c,OSRScore);
-        l=[Select Id, LeadSource,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps2[0].Id LIMIT 1];
-        system.debug('Lead Source: '+l.LeadSource +' should not contain '+LeadSource);
-        system.assertNOTEquals(l.Opp_Score__c,OSRScore);
+        Opportunity o=[Select Id, NextStep,Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
+        system.assertEquals(o.Opp_Score__c,OSRScore);
+        o=[Select Id, LeadSource,Opp_Score__c FROM Opportunity WHERE Id=:opps2[0].Id LIMIT 1];
+        system.debug('Lead Source: '+o.LeadSource +' should not contain '+LeadSource);
+        system.assertNOTEquals(o.Opp_Score__c,OSRScore);
     }//verifyOppPicklistDoesNotContain
 
     static testMethod void verifyOppStringStartsWith(){
@@ -251,6 +260,8 @@ private class OppScoringTests{
         String OppName='TestOpp';
         String NextStep='NextStep';
         String LeadSource='Web';
+        Boolean PrivateOpp = False;
+        Double Amt = 1000;
         String CampaignName='2009-Q3-Event-Dreamforce 2009';
 
         cleanUpTestData();
@@ -259,15 +270,15 @@ private class OppScoringTests{
         insert osrs;
         
         Test.StartTest();
-        opps=createOpps(numOpps,OppName,NextStep, LeadSource);
+        opps=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
         OppName='oppTest';
-        List<Opportunity> opps2=createOpps(numOpps,OppName,NextStep, LeadSource);
+        List<Opportunity> opps2=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
         Test.StopTest();
 
-        Opportunity o=[Select Id, NextStep,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
-        system.assertEquals(l.Opp_Score__c,OSRScore);
-        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps2[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Opp_Score__c,OSRScore);
+        Opportunity o=[Select Id, NextStep,Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
+        system.assertEquals(o.Opp_Score__c,OSRScore);
+        o=[Select Id, Opp_Score__c FROM Opportunity WHERE Id=:opps2[0].Id LIMIT 1];
+        system.assertNOTEquals(o.Opp_Score__c,OSRScore);
     }//verifyOppStringStartsWith
 
   static testMethod void verifyOppBooleanEquals(){
@@ -276,8 +287,8 @@ private class OppScoringTests{
         Boolean Active=True;
         
         Double OSRScore=1;
-        String OSRType='Campaign Member';
-        String OSRFieldName='HasResponded';
+        String OSRType='Opportunity';
+        String OSRFieldName='IsPrivate';
         String OSROperator='Equals';
         String OSRValue='True';
 
@@ -286,41 +297,34 @@ private class OppScoringTests{
         String OppName='TestOpp';
         String NextStep='NextStep';
         String LeadSource='Web';
-        String CampaignName='2009-Q3-Event-Dreamforce 2009';
-        String cmStatus='Responded';//this drives HasResponded=True
+        Boolean PrivateOpp = False;
+        Double Amt = 1000;
 
         cleanUpTestData();
         
         osrs.add(createOSR(Active, OSRType , OSRScore, OSRFieldName, OSROperator, OSRValue));    
         insert osrs;
-        
-        opps=createOpps(numOpps,OppName,NextStep, LeadSource);
-        createCampaign(CampaignName);
-        List<CampaignMember> cms=createCMs(numOpps, c.Id,opps,cmStatus);
-        List<Opportunity> opps2=createOpps(numOpps,OppName,NextStep, LeadSource);
-        cmStatus='Sent';
-        List<CampaignMember> cms2=createCMs(numOpps, c.Id,opps2,cmStatus);        
-        
+          
         Test.StartTest();
-        insert cms;
-        insert cms2;
+        opps=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
+        PrivateOpp = True;
+        insert opps;
         Test.StopTest();
 
-        Opportunity o=[Select Id, NextStep,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
-        system.assertEquals(l.Campaign_Score__c,OSRScore);
-        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps2[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Campaign_Score__c,OSRScore);
+        Opportunity o=[Select Id, NextStep,Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
+        system.assertEquals(o.Opp_Score__c,OSRScore);
+
     }//verifyOppBooleanEquals
     
   static testMethod void verifyOppBooleanNotEqualTo(){
-       Long numOpps=1;
+        Long numOpps=1;
         List<Opportunity> opps = new List<Opportunity>();
         Boolean Active=True;
         
         Double OSRScore=1;
-        String OSRType='Campaign Member';
-        String OSRFieldName='HasResponded';
-        String OSROperator='Not Equal To';
+        String OSRType='Opportunity';
+        String OSRFieldName='IsPrivate';
+        String OSROperator='Not Equal to';
         String OSRValue='True';
 
         List<OppScoringRule__c> osrs=new List<OppScoringRule__c>();
@@ -328,30 +332,22 @@ private class OppScoringTests{
         String OppName='TestOpp';
         String NextStep='NextStep';
         String LeadSource='Web';
-        String CampaignName='2009-Q3-Event-Dreamforce 2009';
-        String cmStatus='Sent';//this drives HasResponded=True
+        Boolean PrivateOpp = False;
+        Double Amt = 1000;
 
         cleanUpTestData();
         
         osrs.add(createOSR(Active, OSRType , OSRScore, OSRFieldName, OSROperator, OSRValue));    
         insert osrs;
-        
-        opps=createOpps(numOpps,OppName,NextStep, LeadSource);
-        createCampaign(CampaignName);
-        List<CampaignMember> cms=createCMs(numOpps, c.Id,opps,cmStatus);
-        List<Opportunity> opps2=createOpps(numOpps,OppName,NextStep, LeadSource);
-        cmStatus='Responded';
-        List<CampaignMember> cms2=createCMs(numOpps, c.Id,opps2,cmStatus);        
-        
+          
         Test.StartTest();
-        insert cms;
-        insert cms2;
+        opps=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
+        PrivateOpp = True;
+        insert opps;
         Test.StopTest();
 
-        Opportunity o=[Select Id, NextStep,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
-        system.assertEquals(l.Campaign_Score__c,OSRScore);
-        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps2[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Campaign_Score__c,OSRScore);
+        Opportunity o=[Select Id, NextStep,Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
+        system.assertNotEquals(o.Opp_Score__c,OSRScore);
     }//verifyOppBooleanNotEqualTo
 
   static testMethod void verifyOppDoubleEquals(){
@@ -361,7 +357,7 @@ private class OppScoringTests{
         
         Double OSRScore=1;
         String OSRType='Opportunity';
-        String OSRFieldName='AnnualRevenue';
+        String OSRFieldName='Amount';
         String OSROperator='Equals';
         String OSRValue='1000';
 
@@ -370,6 +366,8 @@ private class OppScoringTests{
         String OppName='TestOpp';
         String NextStep='NextStep';
         String LeadSource='Web';
+        Boolean PrivateOpp = False;
+        Double Amt = 1000;
         String CampaignName='2009-Q3-Event-Dreamforce 2009';
 
         cleanUpTestData();
@@ -378,15 +376,15 @@ private class OppScoringTests{
         insert osrs;
         
         Test.StartTest();
-        opps=createOpps(numOpps,OppName,NextStep, LeadSource);
-        AnnualRev=2000;
-        List<Opportunity> opps2=createOpps(numOpps,OppName,NextStep, LeadSource);
+        opps=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
+        Amt=2000;
+        List<Opportunity> opps2=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
         Test.StopTest();
 
-        Opportunity o=[Select Id, NextStep,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
-        system.assertEquals(l.Opp_Score__c,OSRScore);
-        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps2[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Opp_Score__c,OSRScore);
+        Opportunity o=[Select Id, NextStep,Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
+        system.assertEquals(o.Opp_Score__c,OSRScore);
+        o=[Select Id, Opp_Score__c FROM Opportunity WHERE Id=:opps2[0].Id LIMIT 1];
+        system.assertNOTEquals(o.Opp_Score__c,OSRScore);
     }//verifyOppDoubleEquals
 
   static testMethod void verifyOppDoubleNotEqualTo(){
@@ -396,7 +394,7 @@ private class OppScoringTests{
         
         Double OSRScore=1;
         String OSRType='Opportunity';
-        String OSRFieldName='AnnualRevenue';
+        String OSRFieldName='Amount';
         String OSROperator='Not Equal To';
         String OSRValue='999';
 
@@ -405,6 +403,8 @@ private class OppScoringTests{
         String OppName='TestOpp';
         String NextStep='NextStep';
         String LeadSource='Web';
+        Boolean PrivateOpp = False;
+        Double Amt = 1000;
         String CampaignName='2009-Q3-Event-Dreamforce 2009';
 
         cleanUpTestData();
@@ -413,15 +413,15 @@ private class OppScoringTests{
         insert osrs;
         
         Test.StartTest();
-        opps=createOpps(numOpps,OppName,NextStep, LeadSource);
-        AnnualRev=999;
-        List<Opportunity> opps2=createOpps(numOpps,OppName,NextStep, LeadSource);
+        opps=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
+        Amt=999;
+        List<Opportunity> opps2=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
         Test.StopTest();
 
-        Opportunity o=[Select Id, NextStep,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
-        system.assertEquals(l.Opp_Score__c,OSRScore);
-        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps2[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Opp_Score__c,OSRScore);
+        Opportunity o=[Select Id, NextStep,Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
+        system.assertEquals(o.Opp_Score__c,OSRScore);
+        o=[Select Id, Opp_Score__c FROM Opportunity WHERE Id=:opps2[0].Id LIMIT 1];
+        system.assertNOTEquals(o.Opp_Score__c,OSRScore);
     }//verifyOppDoubleNotEqualTo
 
   static testMethod void verifyOppDoubleGreaterThan(){
@@ -431,7 +431,7 @@ private class OppScoringTests{
         
         Double OSRScore=1;
         String OSRType='Opportunity';
-        String OSRFieldName='AnnualRevenue';
+        String OSRFieldName='Amount';
         String OSROperator='Greater Than';
         String OSRValue='999';
 
@@ -440,6 +440,8 @@ private class OppScoringTests{
         String OppName='TestOpp';
         String NextStep='NextStep';
         String LeadSource='Web';
+        Boolean PrivateOpp = False;
+        Double Amt = 1000;
         String CampaignName='2009-Q3-Event-Dreamforce 2009';
 
         cleanUpTestData();
@@ -448,15 +450,15 @@ private class OppScoringTests{
         insert osrs;
         
         Test.StartTest();
-        opps=createOpps(numOpps,OppName,NextStep, LeadSource);
-        AnnualRev=998;
-        List<Opportunity> opps2=createOpps(numOpps,OppName,NextStep, LeadSource);
+        opps=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
+        Amt=998;
+        List<Opportunity> opps2=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
         Test.StopTest();
 
-        Opportunity o=[Select Id, NextStep,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
-        system.assertEquals(l.Opp_Score__c,OSRScore);
-        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps2[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Opp_Score__c,OSRScore);
+        Opportunity o=[Select Id, NextStep,Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
+        system.assertEquals(o.Opp_Score__c,OSRScore);
+        o=[Select Id, Opp_Score__c FROM Opportunity WHERE Id=:opps2[0].Id LIMIT 1];
+        system.assertNOTEquals(o.Opp_Score__c,OSRScore);
     }//verifyOppDoubleGreaterThan
 
      static testMethod void verifyOppDoubleGreaterorEqual(){
@@ -466,7 +468,7 @@ private class OppScoringTests{
         
         Double OSRScore=1;
         String OSRType='Opportunity';
-        String OSRFieldName='AnnualRevenue';
+        String OSRFieldName='Amount';
         String OSROperator='Greater or Equal';
         String OSRValue='1000';
 
@@ -475,6 +477,8 @@ private class OppScoringTests{
         String OppName='TestOpp';
         String NextStep='NextStep';
         String LeadSource='Web';
+        Boolean PrivateOpp = False;
+        Double Amt = 1000;
         String CampaignName='2009-Q3-Event-Dreamforce 2009';
 
         cleanUpTestData();
@@ -483,22 +487,20 @@ private class OppScoringTests{
         insert osrs; 
         
         Test.StartTest();
-        opps=createOpps(numOpps,OppName,NextStep, LeadSource);
-        AnnualRev=999;
-        OppScoring.setEvaluateOppsAlreadyCalled(FALSE);
-        List<Opportunity> opps2=createOpps(numOpps,OppName,NextStep, LeadSource);
-        AnnualRev=1001;
-        OppScoring.setEvaluateOppsAlreadyCalled(FALSE);
-        List<Opportunity> opps3=createOpps(numOpps,OppName,NextStep, LeadSource);
+        opps=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
+        Amt=999;
+        List<Opportunity> opps2=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
+        Amt=1001;
+        List<Opportunity> opps3=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
         Test.StopTest();
         
-        Opportunity o=[Select Id, NextStep,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
-        system.assertEquals(OSRScore,l.Opp_Score__c);
+        Opportunity o=[Select Id, NextStep,Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
+        system.assertEquals(OSRScore,o.Opp_Score__c);
 
-        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps2[0].Id LIMIT 1];
-        system.assertNOTEquals(OSRScore,l.Opp_Score__c);
-        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps3[0].Id LIMIT 1];
-        system.assertEquals(l.Opp_Score__c,OSRScore);
+        o=[Select Id, Opp_Score__c FROM Opportunity WHERE Id=:opps2[0].Id LIMIT 1];
+        system.assertNOTEquals(OSRScore,o.Opp_Score__c);
+        o=[Select Id, Opp_Score__c FROM Opportunity WHERE Id=:opps3[0].Id LIMIT 1];
+        system.assertEquals(o.Opp_Score__c,OSRScore);
         
     }//verifyOppDoubleGreaterorEqual
 
@@ -509,7 +511,7 @@ private class OppScoringTests{
         
         Double OSRScore=1;
         String OSRType='Opportunity';
-        String OSRFieldName='AnnualRevenue';
+        String OSRFieldName='Amount';
         String OSROperator='Less Or Equal';
         String OSRValue='1000';
 
@@ -518,6 +520,8 @@ private class OppScoringTests{
         String OppName='TestOpp';
         String NextStep='NextStep';
         String LeadSource='Web';
+        Boolean PrivateOpp = False;
+        Double Amt = 1000;
         String CampaignName='2009-Q3-Event-Dreamforce 2009';
 
         cleanUpTestData();
@@ -526,21 +530,19 @@ private class OppScoringTests{
         insert osrs;
         
         Test.StartTest();
-        opps=createOpps(numOpps,OppName,NextStep, LeadSource);
-        AnnualRev=1001;
-        OppScoring.setEvaluateOppsAlreadyCalled(FALSE);
-        List<Opportunity> opps2=createOpps(numOpps,OppName,NextStep, LeadSource);
-        AnnualRev=999;
-        OppScoring.setEvaluateOppsAlreadyCalled(FALSE);
-        List<Opportunity> opps3=createOpps(numOpps,OppName,NextStep, LeadSource);
+        opps=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
+        Amt=1001;
+        List<Opportunity> opps2=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
+        Amt=999;
+        List<Opportunity> opps3=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
         Test.StopTest();
 
-        Opportunity o=[Select Id, NextStep,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
-        system.assertEquals(l.Opp_Score__c,OSRScore);
-        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps2[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Opp_Score__c,OSRScore);
-        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps3[0].Id LIMIT 1];
-        system.assertEquals(l.Opp_Score__c,OSRScore);
+        Opportunity o=[Select Id, NextStep,Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
+        system.assertEquals(o.Opp_Score__c,OSRScore);
+        o=[Select Id, Opp_Score__c FROM Opportunity WHERE Id=:opps2[0].Id LIMIT 1];
+        system.assertNOTEquals(o.Opp_Score__c,OSRScore);
+        o=[Select Id, Opp_Score__c FROM Opportunity WHERE Id=:opps3[0].Id LIMIT 1];
+        system.assertEquals(o.Opp_Score__c,OSRScore);
     }//verifyOppDoubleLessOrEqual
 
   static testMethod void verifyOppDoubleLessThan(){
@@ -550,7 +552,7 @@ private class OppScoringTests{
         
         Double OSRScore=1;
         String OSRType='Opportunity';
-        String OSRFieldName='AnnualRevenue';
+        String OSRFieldName='Amount';
         String OSROperator='Less Than';
         String OSRValue='1001';
 
@@ -559,6 +561,8 @@ private class OppScoringTests{
         String OppName='TestOpp';
         String NextStep='NextStep';
         String LeadSource='Web';
+        Boolean PrivateOpp = False;
+        Double Amt = 1000;
         String CampaignName='2009-Q3-Event-Dreamforce 2009';
 
         cleanUpTestData();
@@ -567,15 +571,15 @@ private class OppScoringTests{
         insert osrs;
         
         Test.StartTest();
-        opps=createOpps(numOpps,OppName,NextStep, LeadSource);
-        AnnualRev=1002;
-        List<Opportunity> opps2=createOpps(numOpps,OppName,NextStep, LeadSource);
+        opps=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
+        Amt=1002;
+        List<Opportunity> opps2=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
         Test.StopTest();
 
-        Opportunity o=[Select Id, NextStep,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
-        system.assertEquals(l.Opp_Score__c,OSRScore);
-        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps2[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Opp_Score__c,OSRScore);
+        Opportunity o=[Select Id, NextStep,Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
+        system.assertEquals(o.Opp_Score__c,OSRScore);
+        o=[Select Id, Opp_Score__c FROM Opportunity WHERE Id=:opps2[0].Id LIMIT 1];
+        system.assertNOTEquals(o.Opp_Score__c,OSRScore);
     }//verifyOppDoubleLessThan
 
   static testMethod void verifyOppDateEquals(){
@@ -594,6 +598,8 @@ private class OppScoringTests{
         String OppName='TestOpp';
         String NextStep='NextStep';
         String LeadSource='Web';
+        Boolean PrivateOpp = False;
+        Double Amt = 1000;
         String CampaignName='2009-Q3-Event-Dreamforce 2009';
 
         cleanUpTestData();
@@ -602,11 +608,11 @@ private class OppScoringTests{
         insert osrs;
         
         Test.StartTest();
-        opps=createOpps(numOpps,OppName,NextStep, LeadSource);
+        opps=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
         Test.StopTest();
 
-        Opportunity o=[Select Id, NextStep,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
-//        system.assertEquals(l.Opp_Score__c,OSRScore);
+        Opportunity o=[Select Id, NextStep,Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
+//        system.assertEquals(o.Opp_Score__c,OSRScore);
 //Date criteria don't yet work
         //Negative test in next test method
     }//verifyOppDateEquals
@@ -629,6 +635,8 @@ private class OppScoringTests{
         String OppName='TestOpp';
         String NextStep='NextStep';
         String LeadSource='Web';
+        Boolean PrivateOpp = False;
+        Double Amt = 1000;
         String CampaignName='2009-Q3-Event-Dreamforce 2009';
 
         cleanUpTestData();
@@ -637,12 +645,12 @@ private class OppScoringTests{
         insert osrs;
         
         Test.StartTest();
-        opps=createOpps(numOpps,OppName,NextStep, LeadSource);
+        opps=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
         Test.StopTest();
 
-        Opportunity o=[Select Id, CreatedDate,NextStep,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
-        system.debug('Created Date: '+l.CreatedDate+' ; OSRValue : '+OSRValue);
-        system.assertNOTEquals(l.Opp_Score__c,OSRScore);
+        Opportunity o=[Select Id, CreatedDate,NextStep,Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
+        system.debug('Created Date: '+o.CreatedDate+' ; OSRValue : '+OSRValue);
+        system.assertNOTEquals(o.Opp_Score__c,OSRScore);
     }//verifyOppDateEqualsNegativeTest
 
  static testMethod void verifyOppDateNotEqualTo(){
@@ -662,7 +670,10 @@ private class OppScoringTests{
         
         String OppName='TestOpp';
         String NextStep='NextStep';
+        
         String LeadSource='Web';
+        Boolean PrivateOpp = False;
+        Double Amt = 1000;
         String CampaignName='2009-Q3-Event-Dreamforce 2009';
 
         cleanUpTestData();
@@ -671,11 +682,11 @@ private class OppScoringTests{
         insert osrs;
         
         Test.StartTest();
-        opps=createOpps(numOpps,OppName,NextStep, LeadSource);
+        opps=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
         Test.StopTest();
 
-        Opportunity o=[Select Id, NextStep,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
-//        system.assertEquals(l.Opp_Score__c,OSRScore);
+        Opportunity o=[Select Id, NextStep,Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
+//        system.assertEquals(o.Opp_Score__c,OSRScore);
 //Date criteria don't yet work
         //Negative test in next test method
     }//verifyOppDateNotEqualTo
@@ -695,7 +706,10 @@ private class OppScoringTests{
         
         String OppName='TestOpp';
         String NextStep='NextStep';
+        
         String LeadSource='Web';
+        Boolean PrivateOpp = False;
+        Double Amt = 1000;
         String CampaignName='2009-Q3-Event-Dreamforce 2009';
 
         cleanUpTestData();
@@ -704,11 +718,11 @@ private class OppScoringTests{
         insert osrs;
         
         Test.StartTest();
-        opps=createOpps(numOpps,OppName,NextStep, LeadSource);
+        opps=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
         Test.StopTest();
 
-        Opportunity o=[Select Id, NextStep,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Opp_Score__c,OSRScore);
+        Opportunity o=[Select Id, NextStep,Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
+        system.assertNOTEquals(o.Opp_Score__c,OSRScore);
     }//verifyOppDateNotEqualToNegativeTest
 
   static testMethod void verifyDupeRulesDoesntGack(){
@@ -726,7 +740,10 @@ private class OppScoringTests{
         
         String OppName='TestOpp';
         String NextStep='NextStep';
+        
         String LeadSource='Web';
+        Boolean PrivateOpp = False;
+        Double Amt = 1000;
         String CampaignName='2009-Q3-Event-Dreamforce 2009';
 
         cleanUpTestData();
@@ -736,11 +753,11 @@ private class OppScoringTests{
         insert osrs;
         
         Test.StartTest();
-        opps=createOpps(numOpps,OppName,NextStep, LeadSource);
+        opps=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
         Test.StopTest();
 
-        Opportunity o=[Select Id, NextStep,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
-        system.assertEquals(l.Opp_Score__c,OSRScore*2);
+        Opportunity o=[Select Id, NextStep,Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
+        system.assertEquals(o.Opp_Score__c,OSRScore*2);
     }//verifyDupeRulesDoesntGack
 
   static testMethod void verifyNullFieldNameDoesntGack(){
@@ -758,7 +775,10 @@ private class OppScoringTests{
         
         String OppName='TestOpp';
         String NextStep='NextStep';
+        
         String LeadSource='Web';
+        Boolean PrivateOpp = False;
+        Double Amt = 1000;
         String CampaignName='2009-Q3-Event-Dreamforce 2009';
 
         cleanUpTestData();
@@ -770,11 +790,11 @@ private class OppScoringTests{
             system.debug('OSR insert failed as expected due to null FieldName ' + e);       
         }
         Test.StartTest();
-        opps=createOpps(numOpps,OppName,NextStep, LeadSource);
+        opps=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
         Test.StopTest();
 
-        Opportunity o=[Select Id, NextStep,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Opp_Score__c,OSRScore);
+        Opportunity o=[Select Id, NextStep,Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
+        system.assertNOTEquals(o.Opp_Score__c,OSRScore);
     }//verifyNullFieldNameDoesntGack
     
 static testMethod void verifyNullOperatorDoesntGack(){
@@ -793,6 +813,8 @@ static testMethod void verifyNullOperatorDoesntGack(){
         String OppName='TestOpp';
         String NextStep='NextStep';
         String LeadSource='Web';
+        Boolean PrivateOpp = False;
+        Double Amt = 1000;
         String CampaignName='2009-Q3-Event-Dreamforce 2009';
 
         cleanUpTestData();
@@ -801,11 +823,11 @@ static testMethod void verifyNullOperatorDoesntGack(){
         insert osrs;
         
         Test.StartTest();
-        opps=createOpps(numOpps,OppName,NextStep, LeadSource);
+        opps=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
         Test.StopTest();
 
-        Opportunity o=[Select Id, NextStep,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Opp_Score__c,OSRScore);
+        Opportunity o=[Select Id, NextStep,Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
+        system.assertNOTEquals(o.Opp_Score__c,OSRScore);
     }//verifyNullOperatorDoesntGack
 
   static testMethod void verifyInvalidFieldNameDoesntGack(){
@@ -823,7 +845,10 @@ static testMethod void verifyNullOperatorDoesntGack(){
         
         String OppName='TestOpp';
         String NextStep='NextStep';
+        
         String LeadSource='Web';
+        Boolean PrivateOpp = False;
+        Double Amt = 1000;
         String CampaignName='2009-Q3-Event-Dreamforce 2009';
 
         cleanUpTestData();
@@ -852,6 +877,8 @@ static testMethod void verifyNullOperatorDoesntGack(){
         String OppName='TestOpp';
         String NextStep='NextStep';
         String LeadSource='Web';
+        Boolean PrivateOpp = False;
+        Double Amt = 1000;
         String CampaignName='2009-Q3-Event-Dreamforce 2009';
 
         cleanUpTestData();
@@ -860,11 +887,11 @@ static testMethod void verifyNullOperatorDoesntGack(){
         insert osrs;
         
         Test.StartTest();
-        opps=createOpps(numOpps,OppName,NextStep, LeadSource);
+        opps=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
         Test.StopTest();
 
-        Opportunity o=[Select Id, NextStep,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
-        system.assertNOTEquals(l.Opp_Score__c,OSRScore);
+        Opportunity o=[Select Id, NextStep,Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
+        system.assertNOTEquals(o.Opp_Score__c,OSRScore);
     }//verifyInvalidOperatorDoesntGack
 
     static testMethod void verifyFieldNameCapitalsDontGack(){
@@ -883,6 +910,8 @@ static testMethod void verifyNullOperatorDoesntGack(){
         String OppName='TestOpp';
         String NextStep='NextStep';
         String LeadSource='Web';
+        Boolean PrivateOpp = False;
+        Double Amt = 1000;
         String CampaignName='2009-Q3-Event-Dreamforce 2009';
 
         cleanUpTestData();
@@ -893,13 +922,14 @@ static testMethod void verifyNullOperatorDoesntGack(){
         insert osrs;
         
         Test.StartTest();
-        opps=createOpps(numOpps,OppName,NextStep, LeadSource);
+        opps=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
         Test.StopTest();
 
-        Opportunity o=[Select Id, NextStep,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
-        system.assertEquals(l.Opp_Score__c,OSRScore*2);
+        Opportunity o=[Select Id, NextStep,Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
+        system.assertEquals(o.Opp_Score__c,OSRScore*2);
     }//verifyFieldNameCapitalsDontGack
 
+/* OppFork cm There may not need to be a test of the Delete Trigger as it pertains to a related Campaign Member for OppScoring
     static testMethod void verifyDeleteTrigger(){
         Long numOpps=1;
         List<Opportunity> opps = new List<Opportunity>();
@@ -916,6 +946,8 @@ static testMethod void verifyNullOperatorDoesntGack(){
         String OppName='TestOpp';
         String NextStep='NextStep';
         String LeadSource='Web';
+        Boolean PrivateOpp = False;
+        Double Amt = 1000;
         String CampaignName='2009-Q3-Event-Dreamforce 2009';
 
         cleanUpTestData();
@@ -924,7 +956,7 @@ static testMethod void verifyNullOperatorDoesntGack(){
         insert osrs;
         createCampaign(CampaignName);
 
-        opps=createOpps(numOpps,OppName,NextStep, LeadSource);
+        opps=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
         List<CampaignMember> cms=createCMs(NumOpps, c.Id,opps,'Sent');
 
         test.startTest();
@@ -934,24 +966,24 @@ static testMethod void verifyNullOperatorDoesntGack(){
 //      system.debug('CampaignMemberScore for the first is :'+cms[0].Campaign_Score__c);
         system.assertEquals(OSRScore, cms[0].Campaign_Score__c);
 
-        Opportunity o=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
-        system.assertEquals(OSRScore, l.Campaign_Score__c);
-//        system.debug('Campaign score on the Opportunity is :'+l.Campaign_Score__c);
+        Opportunity o=[Select Id, Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
+        system.assertEquals(OSRScore, o.Campaign_Score__c);
+//        system.debug('Campaign score on the Opportunity is :'+o.Campaign_Score__c);
         
         delete cms;
-        
         test.stopTest();
-        l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
-        system.assertEquals(0, l.Campaign_Score__c);
+        o=[Select Id, Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
+        system.assertEquals(0, o.Campaign_Score__c);
     }//verifyDeleteTrigger 
+*/        
 
     static testMethod void verifyOSRLabelAndName(){
         Boolean Active=True;
         Double OSRScore=1;
         String OSRType='Opportunity';
-        String OSRFieldName='Status';
+        String OSRFieldName='StageName';
         String OSROperator='Equals';
-        String OSRValue='Open';
+        String OSRValue='Closed Won';
         List<OppScoringRule__c> osrs=new List<OppScoringRule__c>();
 
         cleanUpTestData();
@@ -960,9 +992,9 @@ static testMethod void verifyNullOperatorDoesntGack(){
         insert osrs;
         OppScoringRule__c osr=[Select Id, Name, Field_Label__c, Field_Name__c FROM OppScoringRule__c WHERE Id=:osrs[0].Id LIMIT 1];
         //Check it first upon insert
-        system.assertEquals(osr.Field_Label__c,Schema.SObjectType.CampaignMember.fields.getMap().get(OSRFieldName).getDescribe().getLabel());
+        system.assertEquals(osr.Field_Label__c,Schema.SObjectType.Opportunity.fields.getMap().get(OSRFieldName).getDescribe().getLabel());
         
-        OSRFieldName='email';
+        OSRFieldName='Type';
         osr.Field_Name__c=OSRFieldName;
         update osr;
         osr=[Select Id, Name, Field_Label__c, Field_Name__c FROM OppScoringRule__c WHERE Id=:osrs[0].Id LIMIT 1];
@@ -980,8 +1012,8 @@ static testMethod void verifyNullOperatorDoesntGack(){
         Test.setCurrentPage(pageRef);
 
         OppScoringRule__c osr=new OppScoringRule__c();
-        osr.Type__c='Campaign Member';
-        osr.Field_Name__c='HasResponded';//this will run the checkbox check
+        osr.Type__c='Opportunity';
+        osr.Field_Name__c='IsPrivate';//this will run the checkbox check
         osr.Score_Change__c=5;
         osr.Operator__c='Equals';
         osr.Value__c='True';
@@ -993,7 +1025,7 @@ static testMethod void verifyNullOperatorDoesntGack(){
         scExt.getValuePicklistOptions();
         
         osr.Type__c='Opportunity';
-        osr.Field_Name__c='Status';//this will run the checkbox check
+        osr.Field_Name__c='StageName';//this will run the checkbox check
         apexPages.StandardController sc2 = new ApexPages.StandardController(osr);
         OppScoringRulesController scExt2 = new OppScoringRulesController(sc2);
         scExt.getOSRFieldNames();
@@ -1029,12 +1061,12 @@ static testMethod void verifyNullOperatorDoesntGack(){
                 Database.executeBatch(initLS, 10);
             Test.StopTest();
                 
-            Opportunity o=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
+            Opportunity o=[Select Id, Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
                 
-    //        system.debug('Assert Opp_Score__c = 1 (or 10, or 100).  Actual: ' +l.Opp_Score__c);
-            System.AssertEquals(NumOppRules,l.Opp_Score__c);
-    //        system.debug('Assert Total_Opp_Score__c = '+NumOppRules+'.  Actual:' +l.Total_Opp_Score__c);
-            System.AssertEquals(NumOppRules,l.Total_Opp_Score__c);
+    //        system.debug('Assert Opp_Score__c = 1 (or 10, or 100).  Actual: ' +o.Opp_Score__c);
+            System.AssertEquals(NumOppRules,o.Opp_Score__c);
+    //        system.debug('Assert Total_Opp_Score__c = '+NumOppRules+'.  Actual:' +o.Total_Opp_Score__c);
+            System.AssertEquals(NumOppRules,o.Total_Opp_Score__c);
         }//if 1
    }//testOppScoringInitialize */
    
@@ -1064,15 +1096,15 @@ static testMethod void verifyNullOperatorDoesntGack(){
                 Database.executeBatch(initCS, 10);
             Test.StopTest();
 
-            Opportunity o=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
+            Opportunity o=[Select Id, Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
             CampaignMember cm=[Select Id, Campaign_Score__c FROM CampaignMember WHERE OppId=:opps[0].Id LIMIT 1];
             
 //            system.debug('Assert cm Campaign_Score__c = '+cmScore+'.  Actual: ' +cm.Campaign_Score__c);
             System.AssertEquals(cmScore*NumCMRules,cm.Campaign_Score__c);
-//            system.debug('Assert Opportunity Campaign_Score__c = '+cmScore+'.  Actual: ' +l.Campaign_Score__c);
-            System.AssertEquals(cmScore*NumCMRules,l.Campaign_Score__c);
-//            system.debug('Assert Total_Opp_Score__c = '+NumCMRules+cmScore+'.  Actual:' +l.Total_Opp_Score__c);
-            System.AssertEquals(NumCMRules*cmScore,l.Total_Opp_Score__c);
+//            system.debug('Assert Opportunity Campaign_Score__c = '+cmScore+'.  Actual: ' +o.Campaign_Score__c);
+            System.AssertEquals(cmScore*NumCMRules,o.Campaign_Score__c);
+//            system.debug('Assert Total_Opp_Score__c = '+NumCMRules+cmScore+'.  Actual:' +o.Total_Opp_Score__c);
+            System.AssertEquals(NumCMRules*cmScore,o.Total_Opp_Score__c);
        }//if 1            
    }//testOppCampaignScoreInitialize */
 
@@ -1107,56 +1139,6 @@ static testMethod void verifyNullOperatorDoesntGack(){
         //test is that this doesn't gack:
         insert osrs;
         
-    }//verifyLongRuleNameDoesntBreak
-
-
-    static testMethod void testBulkOppInsertForScoring()
-    {
-        Long numOpps=40;
-        List<Opportunity> opps = new List<Opportunity>{};
-        Set<Id> oppIds = new Set<Id>();
-        Boolean Active=True;
-        
-        Double OSRScore=1;
-        String OSRType='Opportunity';
-        String OSRFieldName='NextStep';
-        String OSROperator='eQuals';//testing capitalization as well
-        String OSRValue='NextStep';//testing capitalization as well
-        List<OppScoringRule__c> osrs=new List<OppScoringRule__c>();
-
-        String OppName='TestOpp';
-        String NextStep=OSRValue;
-        String LeadSource='Web';
-        String CampaignName='';
-        
-        cleanUpTestData();
-        
-        osrs.add(createOSR(Active, OSRType , OSRScore, OSRFieldName, OSROperator, OSRValue));    
-        insert osrs;
-        
-        Test.StartTest();
-        opps=createOpps(numOpps,OppName,NextStep, LeadSource);        
-       
-        Test.StopTest();
-        
-        for(Opportunity opp : opps)
-        {
-            oppIds.add(opp.Id);
-        }
-        List<Opportunity> oppList=[Select Id, NextStep,Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c, Lassy__r.User__r.ProfileId FROM Opportunity WHERE Id in :oppIds];
-        System.debug('No Of Opportunities inserted ... ' + oppList.size());
-        Integer i = 1;
-        for(Opportunity l : oppList)
-        {
-            System.debug('Opportunity ' + i + 'score :: ' + l.Opp_Score__c);
-            i++;    
-            system.assertEquals(OSRScore,l.Opp_Score__c);
-            //system.assertEquals(ADMISSION_COUNSELOR_PROFILE,l.Lassy__r.User__r.ProfileId);
-            
-        } 
-        //l=[Select Id, Opp_Score__c, Campaign_Score__c, Total_Opp_Score__c FROM Opportunity WHERE Id=:opps2[0].Id LIMIT 1];
-        //system.assertNOTEquals(l.Opp_Score__c,OSRScore);
-    } // testBulkOppInsertForScoring
- 
+    }//verifyLongRuleNameDoesntBreak 
     
 }//OppScoringTests

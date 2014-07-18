@@ -45,7 +45,8 @@ private class OppScoringTests{
 
         return opps;
     }//createOpps
-    
+
+/* OppFork CM not used in 2U mod    
     //utility class to create dummy data to test. Overloaded to include Type
     public static List<Opportunity> createOpps(Long NumOpps, String OppName, String NxtS, String type, String LeadSrc) {
         List<Opportunity> opps = new List<Opportunity>{};
@@ -64,7 +65,7 @@ private class OppScoringTests{
         insert c1;
         c=c1;//lets the campaign be referenced in the method that calls this method
     }
-
+*/
     public static OppScoringRule__c createOSR(Boolean Active, String OSRType, Double OSRScore, String OSRFN, String OSROperator, String OSRValue) {
         OppScoringRule__c osr;
         if (c==null){

@@ -59,7 +59,6 @@
         <inlineHelpText>Leave blank to select all campaigns</inlineHelpText>
         <label>Filter By Campaign (optional):</label>
         <referenceTo>Campaign</referenceTo>
-        <relationshipLabel>Opp Scoring Rules</relationshipLabel>
         <relationshipName>Opp_Scoring_Rules</relationshipName>
         <required>false</required>
         <trackHistory>false</trackHistory>
@@ -171,7 +170,7 @@
         <type>Text</type>
         <unique>false</unique>
     </fields>
-    <label>Opp Scoring Rule</label>
+    <label>Application Scoring Rule</label>
     <listViews>
         <fullName>All</fullName>
         <columns>Active__c</columns>
@@ -187,11 +186,11 @@
         <label>All</label>
     </listViews>
     <nameField>
-        <label>Opp Scoring Rule Name</label>
+        <label>Application Scoring Rule Name</label>
         <trackHistory>false</trackHistory>
         <type>Text</type>
     </nameField>
-    <pluralLabel>Opp Scoring Rules</pluralLabel>
+    <pluralLabel>Application Scoring Rules</pluralLabel>
     <searchLayouts>
         <customTabListAdditionalFields>Active__c</customTabListAdditionalFields>
         <customTabListAdditionalFields>Type__c</customTabListAdditionalFields>

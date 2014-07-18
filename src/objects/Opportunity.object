@@ -3,7 +3,7 @@
     <fields>
         <fullName>Opp_Score__c</fullName>
         <externalId>false</externalId>
-        <label>Opp Score</label>
+        <label>Application Score</label>
         <precision>18</precision>
         <required>false</required>
         <scale>0</scale>

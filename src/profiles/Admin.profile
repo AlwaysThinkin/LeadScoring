@@ -21,6 +21,10 @@
         <apexClass>OppScoringRulesController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
+    <classAccesses>
+        <apexClass>OppScoringTests</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
     <fieldPermissions>
         <editable>true</editable>
         <field>OppScoringRule__c.Active__c</field>
@@ -92,10 +96,6 @@
     </pageAccesses>
     <tabVisibilities>
         <tab>OppScoringRule__c</tab>
-        <visibility>DefaultOn</visibility>
-    </tabVisibilities>
-    <tabVisibilities>
-        <tab>Score_All_Opps</tab>
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
     <userLicense>Salesforce</userLicense>

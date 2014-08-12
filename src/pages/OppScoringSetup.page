@@ -67,7 +67,8 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
             <tr> 
                 <td  valign="top" > <apex:image id="OppScoringRulepic2" value="{!$Resource.OppScoringSetupPic2}"/><br/>
                 </td> 
-            </tr> 
+            </tr>
+            <tr> 
                 <td valign="top" width="350" rowspan="2">
                      <br/>
                      <b>What is Opportunity scoring?</b><br/><br/>

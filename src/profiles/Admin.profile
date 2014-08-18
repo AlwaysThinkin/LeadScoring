@@ -25,6 +25,10 @@
         <apexClass>OppScoringTests</apexClass>
         <enabled>true</enabled>
     </classAccesses>
+    <classAccesses>
+        <apexClass>OpportunityHandler</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
     <fieldPermissions>
         <editable>true</editable>
         <field>OppScoringRule__c.Active__c</field>

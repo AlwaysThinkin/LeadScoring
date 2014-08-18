@@ -33,6 +33,9 @@ private class OppScoringTests{
     
     static campaign c;//used to store the campaign value for creaing CM's later if needed
 
+    public static Global_Feature_Toggles__c scorToggle;//Used to hold toggle Active status
+
+
     //utility class to create dummy data to test
     public static List<Opportunity> createOpps(Long NumOpps, String OppName, String NxtS, String LeadSrc, Boolean PrivateOpp, Double Amt) {
         List<Opportunity> opps = new List<Opportunity>{};
@@ -93,6 +96,15 @@ private class OppScoringTests{
     public static void cleanUpTestData() {
         List<OppScoringRule__c> osrs=[Select ID from OppScoringRule__c LIMIT 500];
         delete osrs;
+
+        if (scorToggle == null) {
+            scorToggle = Global_Feature_Toggles__c.getValues('OppScoring');
+            if (scorToggle == null) {
+                scorToggle = new Global_Feature_Toggles__c(Name='OppScoring',
+                    Active__c=true);
+            }
+            upsert scorToggle;
+        }
     }//cleanUpTestData
        
     static testMethod void verifyOppStringEquals(){
@@ -723,7 +735,54 @@ private class OppScoringTests{
         system.assertNOTEquals(o.Opp_Score__c,OSRScore);
     }//verifyOppDateNotEqualToNegativeTest
 
-  static testMethod void verifyDupeRulesDoesntGack(){
+   static testMethod void verifyCompletedAppsAreNotScored(){
+        Long numOpps=1;
+        List<Opportunity> opps = new List<Opportunity>{};
+        Boolean Active=True;
+        
+        Double OSRScore=1;
+        String OSRType='Opportunity';
+        String OSRFieldName='NextStep';
+        String OSROperator='eQuals';//testing capitalization as well
+        String OSRValue='NextStep';//testing capitalization as well
+        List<OppScoringRule__c> osrs=new List<OppScoringRule__c>();
+
+        String OppName='TestOpp';
+        String NextStep=OSRValue;
+        String LeadSource='Web';
+        Boolean PrivateOpp = False;
+        Double Amt = 1000;
+        String CampaignName='';
+        
+        cleanUpTestData();
+        
+        osrs.add(createOSR(Active, OSRType , OSRScore, OSRFieldName, OSROperator, OSRValue));    
+        insert osrs;
+        
+        Test.StartTest();
+        opps=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
+        
+        NextStep='asdf';
+        List<Opportunity> opps2=createOpps(numOpps,OppName,NextStep, LeadSource, PrivateOpp, Amt);
+        Test.StopTest();
+
+        Opportunity o=[Select Id, NextStep,Opp_Score__c FROM Opportunity WHERE Id=:opps[0].Id LIMIT 1];
+        system.assertEquals(o.Opp_Score__c,OSRScore);
+
+        o=[Select Id, Opp_Score__c FROM Opportunity WHERE Id=:opps2[0].Id LIMIT 1];
+        system.assertNOTEquals(o.Opp_Score__c,OSRScore);
+       
+        opps2[0].application_completed__c = true;
+        opps2[0].NextStep = NextStep;
+        update opps2[0];
+       
+        o=[Select Id, Opp_Score__c, application_completed__c, NextStep FROM Opportunity WHERE Id=:opps2[0].Id LIMIT 1];
+        system.assertEquals(NextStep, o.NextStep);
+        system.assert(o.application_completed__c);
+        system.assertNOTEquals(o.Opp_Score__c,OSRScore); 
+    }//verifyCompletedAppsAreNotScored
+
+      static testMethod void verifyDupeRulesDoesntGack(){
         Long numOpps=1;
         List<Opportunity> opps = new List<Opportunity>();
         Boolean Active=True;

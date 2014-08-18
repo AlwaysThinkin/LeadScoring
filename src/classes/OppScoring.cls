@@ -147,7 +147,11 @@ public global class OppScoring {
     public static void updateOpps (Set<ID> oppIDs,Map<Id,Double> oppScores, String OppOrMemberScores){
         Opportunity[] opps=[SELECT Id, Opp_Score__c FROM Opportunity WHERE Id IN :oppIDs];
         //Loop through the Opportunities & add the campaign score to each opp
+
+        List<String> relatedIds = new List<String>{};
+
         For (Opportunity eachOpp : opps){
+            relatedIds.add(String.valueOf(eachOpp.Id));
             //handle null values by replacing them with zero
             if (OppOrMemberScores=='Opportunity'){//if 1
                 if (eachOpp.Opp_Score__c==null){//if 2
@@ -170,7 +174,8 @@ public global class OppScoring {
         Try{
             update opps;
         } catch (DMLException e) {
-            system.debug('Opportunitys were not all updated properly: ' + e);
+            LogUtil.log('OppScoring.updateOpps', e, relatedIds,
+                'Opportunitys were not all updated properly.');
         }//try
     }//updateOpps
 /* OppFork CM    
@@ -231,6 +236,8 @@ public global class OppScoring {
         Integer OppCount=0;        
         //Solves the asynch apex infinite loop problem
         oppScoringClassAlreadyCalled=TRUE;
+
+        List<String> relatedIds = new List<String>{};
         
         OppScoringRule__c[] Rules=activeOppScoringRuleDetails('Opportunity');
         
@@ -276,7 +283,8 @@ public global class OppScoring {
                     scoreChange+=oppScores.get(opps[i].Id);
                     Double removedScore=oppScores.remove(opps[i].Id);//remove it so we can read it with the incremented value
                 }//if 2    
-                oppScores.put(opps[i].Id,scoreChange);                    
+                oppScores.put(opps[i].Id,scoreChange);
+                relatedIds.add(string.valueOf(opps[i].Id));
 //            }//if 1                
             system.debug('Opportunity Count Successfully Processed: '+OppCount++ + ' with Script statement count at: '+limits.getScriptStatements());
         }//for 1   
@@ -284,7 +292,8 @@ public global class OppScoring {
         try{
             updateOpps (oppIds,oppScores,'Opportunity');
         } catch (Exception e){
-            system.debug('Opportunitys were not updated: '+e);
+            LogUtil.log('OppScoring.evaluateOpps2', e, relatedIds,
+                'Opportunitys were not all updated.');
         }//catch
 
     }//evaluateOpps
@@ -355,17 +364,17 @@ public global class OppScoring {
     public static Map<String,DisplayType> getRuleFieldInfo(Map<String, Schema.SObjectField> objectMap, OppScoringRule__c[] Rules){
         Set<String> RuleFieldNames=new Set<String>();
         Map<String,DisplayType> fieldTypeMap=new Map<String,DisplayType>();
+        List<String> relatedIds = new List<String>{};
         
         for (OppScoringRule__c rule:Rules){
+            relatedIds.add(string.valueOf(rule.Id));
             if (RuleFieldNames.contains(rule.Field_Name__c)==FALSE){
                 RuleFieldNames.add(rule.Field_Name__c);
                 try{    //try to get the field type for this field for casting the object later.  
-                        //This will fail if the rule.Field_Name__c doesn't match the API name for a field in CampaignMember
                     Schema.SObjectField fieldToken=objectMap.get(rule.Field_Name__c);
                     fieldTypeMap.put(rule.Field_Name__c,fieldToken.getDescribe().getType());
                 } catch (Exception e){
-                    system.debug('The field name in this customers rule is likely invalid: '+ rule.Field_Name__c);
-                    system.debug('Error when trying to get the type of this field: '+ e);
+                    LogUtil.log('OppScoring.getRuleFieldInfo', e, relatedIds, 'The field name in this rule is likely invalid.');
                 }//try    
             }//if
         }//for    
